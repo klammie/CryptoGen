@@ -3,10 +3,13 @@
 import prisma from "./lib/db";
 import { requireUser } from "./lib/hooks";
 import {parseWithZod} from "@conform-to/zod"
-import { onboardingSchema, onboardingSchemaValidation } from "./lib/zodSchemas";
+import {  onboardingSchemaValidation } from "./lib/zodSchemas";
 import { redirect } from "next/navigation";
 
-export async function OnboardingAction(previosState: any, formData: FormData) {
+export async function OnboardingAction(
+  _previousState: Record<string, unknown>,
+  formData: FormData
+) {
   const session = await requireUser();
 
   const submission = await parseWithZod(formData, {
@@ -38,5 +41,6 @@ export async function OnboardingAction(previosState: any, formData: FormData) {
     }
   })
 
+  console.log(data);
   return redirect("/dashboard");
 }

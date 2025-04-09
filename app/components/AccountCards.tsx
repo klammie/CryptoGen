@@ -4,7 +4,6 @@ import { Check, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -13,6 +12,7 @@ import {
 import { updateKeyz } from "@/app/lib/UpdateKeyz"; // Ensure correct import path
 import { toast, Toaster } from "sonner";
 import { updateAccbal } from "../lib/updateAccountBalance";
+import { error } from "console";
 interface AccountCardProps {
   id: string;
   type: string;
@@ -52,7 +52,9 @@ const AccountCard: React.FC<AccountCardProps> = ({
     }
 
     // Check if account ID already exists
-    const accountExists = demoAccounts.some((account) => account.id === id);
+    const accountExists = demoAccounts.some(
+      (account: { id: string }) => account.id === id
+    );
     if (accountExists) {
       toast.error("Account already exists!");
       return;
@@ -88,7 +90,9 @@ const AccountCard: React.FC<AccountCardProps> = ({
     }
 
     // Check if account ID already exists
-    const accountExists = liveAccounts.some((account) => account.id === id);
+    const accountExists = liveAccounts.some(
+      (account: { id: string }) => account.id === id
+    );
     if (accountExists) {
       toast.error("Account already exists!");
       return;
@@ -134,7 +138,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
       setTotalAmount(amount);
       setDiscountAmount(0);
       toast.error("Invalid discount code");
-      console.log("Invalid Discount Code");
+      console.log("Invalid Discount Code", errorMessage);
     }
     setDiscountCode("");
   };

@@ -26,8 +26,11 @@ export default function AuthModal() {
   return (
     <Dialog>
       {/* Login Trigger Button */}
+      {/* Login Trigger Button */}
       <DialogTrigger asChild>
-        <Button className="bg-black">Try for Free</Button>
+        <Button className="bg-black" disabled={loading}>
+          {loading ? "Signing in..." : "Try for Free"}
+        </Button>
       </DialogTrigger>
 
       {/* Modal Content */}

@@ -8,8 +8,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+interface TradeLog {
+  matchedCrypto?: {
+    image: string;
+    name: string;
+  };
+  result: number;
+}
+
 export function AllTrades() {
-  const [tradeLogs, setTradeLogs] = useState<Array<any>>([]);
+  const [tradeLogs, setTradeLogs] = useState<TradeLog[]>([]);
 
   useEffect(() => {
     try {

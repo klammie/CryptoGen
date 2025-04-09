@@ -1,9 +1,7 @@
-"use server";
+import prisma from "./db";
+import { requireUser } from "./hooks";
 
-import prisma from "./db"; // Adjust path based on your project structure
-import { requireUser } from "../lib/hooks";
-
-export const updateKeyz = async (formData: FormData) => {
+export const updateKeyz = async () => {
   const session = await requireUser();
   const id = session?.user?.id;
 

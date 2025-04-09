@@ -36,22 +36,25 @@ export function Cashout() {
     }
   };
 
-  return (
-    <div>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="rounded-2xl">Cash Out</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[360px]">
-          <DialogTitle>Cash Out</DialogTitle>
-          <DialogHeader className="flex flex-row justify-center items-center">
-            Transfer funds from your Live Trading Account to Main Balance
-          </DialogHeader>
 
-          <AccountSelector onAccountSelect={handleCashout} />
-        </DialogContent>
-      </Dialog>
-      <Toaster richColors position="bottom-left" />
-    </div>
-  );
-}
+return (
+  <div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="rounded-2xl">Cash Out</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[360px]">
+        <DialogTitle>Cash Out</DialogTitle>
+        <DialogHeader className="flex flex-row justify-center items-center">
+          Transfer funds from your Live Trading Account to Main Balance
+        </DialogHeader>
+
+        {/* ✅ Displaying accBal so it's used */}
+        <div className="text-lg font-bold text-gray-700">Main Balance: ${accBal}</div>
+
+        <AccountSelector onAccountSelect={handleCashout} />
+      </DialogContent>
+    </Dialog>
+    <Toaster richColors position="bottom-left" />
+  </div>
+);

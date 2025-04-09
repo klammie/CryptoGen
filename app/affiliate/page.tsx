@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Head from "next/head";
-import AuthModal from "../components/AuthModal";
+import Image from "next/image"; // ✅ Import Next.js Image component
 
 const Affiliate = () => {
   return (
@@ -16,10 +16,14 @@ const Affiliate = () => {
       <div className="flex flex-col w-full max-w-4xl">
         <div className="flex flex-col md:flex-row mb-6">
           <div className="md:w-1/2">
-            <img
+            {/* ✅ Using Next.js Image component */}
+            <Image
               src="/assets/3d-cryptocurrency-rendering-design.jpg"
               alt="Affiliate Image"
               className="w-full h-auto rounded-md shadow-lg"
+              width={600} // Explicit width
+              height={400} // Explicit height
+              priority // Fast loading optimization
             />
           </div>
           <div className="md:w-1/2 md:pl-6 flex flex-col justify-center">
@@ -32,7 +36,6 @@ const Affiliate = () => {
               promoting our platform. By joining our program, you can earn
               generous commissions every time a user uses your promo code.
             </p>
-
             <Button>Sign up</Button>
           </div>
         </div>
@@ -50,12 +53,12 @@ const Affiliate = () => {
                 code.
               </li>
               <li>
-                Share your promo code with your audience through your website,
-                blog, social media, or any other channel.
+                Share your promo code with your audience through various
+                channels.
               </li>
               <li>
-                Earn commissions for every new user who uses your promo code at
-                checkout and starts trading on CryptoGen.
+                Earn commissions for every new user who uses your promo code and
+                starts trading.
               </li>
             </ol>
           </section>

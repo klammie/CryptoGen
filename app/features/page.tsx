@@ -49,8 +49,8 @@ const Features = () => {
             <p className="text-gray-600">
               Our intuitive interface is designed for both beginners and
               experienced traders. With easy navigation, clear visuals, and
-              comprehensive tools, you'll have everything you need to succeed in
-              the world of cryptocurrency trading.
+              comprehensive tools, you&apos;ll have everything you need to
+              succeed in the world of cryptocurrency trading.
             </p>
           </section>
 
