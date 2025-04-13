@@ -1,25 +1,31 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
 
 import ToggleTrade from "./ToggleTrade";
 import TradeDisplay from "../dashboard/trades/TradeDisplay";
 import { Toaster } from "sonner";
 import { ConfirmDelete } from "./ConfirmDelete";
+import Image from "next/image";
+import { Account } from "@/app/dashboard/trades/TradeSim";
 
 const DemoAccount: React.FC = () => {
-  const [accountData, setAccountData] = useState<Array<any>>([]);
+  const [accountData, setAccountData] = useState<Account[]>([]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("DemoAccount");
     if (storedData) {
-      const parsedData = JSON.parse(storedData);
+      const parsedData = JSON.parse(storedData) as Account[]; // ✅ Explicit casting here
       if (Array.isArray(parsedData) && parsedData.length > 0) {
         setAccountData(parsedData);
       }
     }
   }, []);
+
+  const safeAccountData = accountData.map((account) => ({
+    ...account,
+    features: account.features ?? [], // ✅ Ensures features is always an array
+  }));
 
   return (
     <div className="mx-auto">
@@ -40,16 +46,18 @@ const DemoAccount: React.FC = () => {
                   Demo
                 </div>
 
-                <img
+                <Image
                   src={`/images/${account.image}.png`}
                   alt={account.type}
-                  className="w-full h-auto rounded"
+                  width={800} // Adjust based on your needs
+                  height={600} // Adjust based on your needs
+                  className="rounded"
                 />
 
                 <div className="flex justify-between items-center mt-2">
                   <ToggleTrade account={account} />
                   <ConfirmDelete
-                    accountData={accountData}
+                    accountData={safeAccountData}
                     setAccountData={setAccountData}
                     accountId={account.id}
                   />

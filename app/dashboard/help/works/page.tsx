@@ -30,7 +30,7 @@ export default function Worksroute() {
             consolidations, breakouts, and reversals. By continuously learning
             and adapting, it filters out noise and prioritizes high-probability
             setups, negating emotional decision-making and aligning strategies
-            with the user's risk profile to maximize trading returns.
+            with the user&apos;s risk profile to maximize trading returns.
           </p>
         </div>
       </div>
@@ -70,15 +70,15 @@ export default function Worksroute() {
           <h4 className="text-lg font-semibold mb-3">
             When conditions are met trades are executed
           </h4>
-          <p className="text-sm md:text-base leading-6">
+          <p>
             When market conditions are met, our AI executes trades automatically
             using advanced algorithms for optimal timing and precision. It
             continuously monitors key signals like breakouts, reversals, and
-            volatility shifts eliminating human delay and hesitation. The system
-            also integrates risk management strategies, including stop-loss and
-            take-profit settings, to safeguard capital and tailor trades to
-            individual risk profiles, ensuring even the smallest opportunities
-            are seized in dynamic market environments.
+            volatility shifts, eliminating human delay and hesitation. The
+            system also integrates risk management strategies, including
+            stop-loss and take-profit settings, to safeguard capital and tailor
+            trades to individual risk profiles, ensuring even the smallest
+            opportunities are seized in dynamic market environments.
           </p>
         </div>
       </div>

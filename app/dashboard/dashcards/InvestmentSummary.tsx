@@ -26,9 +26,14 @@ const InvestmentSummary = () => {
 
         // Get the last 100 trade logs directly
         const latestLogs = parsedLogs.slice(-20);
-
+        interface TradeLog {
+          matchedCrypto?: {
+            name?: string;
+          };
+          result: number;
+        }
         // Transform data into expected format: name, wins, loss
-        const formattedData = latestLogs.map((trade) => ({
+        const formattedData = latestLogs.map((trade: TradeLog) => ({
           name: trade.matchedCrypto?.name || "Unknown",
           wins: trade.result >= 1 ? trade.result : 0,
           loss: trade.result < 1 ? Math.abs(trade.result) : 0,

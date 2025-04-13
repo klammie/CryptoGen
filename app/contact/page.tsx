@@ -9,15 +9,16 @@ import mapSnapshot from "@/public/assets/Screenshot 2025-03-07 142557.png"; // R
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission logic here
     toast.success("Your message has been sent successfully!");
-    setForm({ name: "", email: "", message: "" }); // Reset the form
+    setForm({ name: "", email: "", message: "" });
   };
 
   return (

@@ -62,7 +62,7 @@ const Features = () => {
               We are committed to providing exceptional customer support. Our
               dedicated team is available 24/7 to assist you with any questions
               or concerns. Whether you need technical assistance or trading
-              advice, we're here to help.
+              advice, we&apos;re here to help.
             </p>
           </section>
 

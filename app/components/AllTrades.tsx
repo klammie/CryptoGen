@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 
 interface TradeLog {
   matchedCrypto?: {
@@ -61,11 +62,13 @@ export function AllTrades() {
                 key={index}
                 className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 lg:gap-10 px-4 py-4 border-b"
               >
-                <img
-                  src={`/assets/cryptoimages/${trade.matchedCrypto?.image}`}
-                  alt={trade.matchedCrypto?.name}
-                  className="w-8 h-8 rounded-lg shadow-md"
-                />
+              <Image
+  src={`/assets/cryptoimages/${trade.matchedCrypto?.image}`}
+  alt={trade.matchedCrypto?.name ?? "Unknown Crypto"} // ✅ Provides a fallback text
+  width={32}
+  height={32}
+  className="rounded-lg shadow-md"
+/>
                 <div className="flex flex-col justify-between gap-1">
                   <div className="font-bold text-gray-700">
                     {trade.matchedCrypto?.name}

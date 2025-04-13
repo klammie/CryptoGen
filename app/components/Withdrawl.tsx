@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import AccountSelector from "./AccountSelector";
 import Link from "next/link";
 import NumberInput from "./AmountInput";
 
@@ -59,8 +58,8 @@ const Withdrawl: React.FC = () => {
           <h3>
             <span className="font-semibold">Please note:</span> To keep your
             money safe, we encourage you to withdraw via the same method you
-            used for depositing funds. If you can't use this method anymore,
-            contact our{" "}
+            used for depositing funds. If you can&apos;t use this method
+            anymore, contact our{" "}
             <span className="text-blue-500">
               <Link href="/dashboard/help/support">Customer Support</Link>
             </span>

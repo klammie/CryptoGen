@@ -18,7 +18,7 @@ export const WithdrawlAction = async (formData: FormData) => {
       select: { accBal: true },
     });
 
-    if (!userAccount || userAccount.accBal < valueToWithdraw) {
+    if (!userAccount || (userAccount.accBal ?? 0) < valueToWithdraw) {
       throw new Error("Insufficient balance");
     }
 

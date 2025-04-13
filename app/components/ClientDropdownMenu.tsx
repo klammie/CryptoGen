@@ -12,14 +12,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ClientSignOutButton from "@/app/components/ClientSignOut";
-import { signOut } from "../lib/auth";
+import Image from "next/image";
 
-export default function ClientDropdownMenu({ userImage }) {
+interface ClientDropdownMenuProps {
+  userImage: string;
+}
+
+export default function ClientDropdownMenu({
+  userImage,
+}: ClientDropdownMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" size="icon" className="rounded-full">
-          <img src={userImage} alt="pp" />
+          <Image
+            src={userImage}
+            alt="pp"
+            width={40} // Adjust based on your UI needs
+            height={40}
+            className="rounded-full"
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

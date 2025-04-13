@@ -10,8 +10,19 @@ import {
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { incrementKeyz } from "@/app/lib/addKeyz"; // Ensure correct import path
+import { Account } from "@/app/dashboard/trades/TradeSim"; // ✅ Standardized import
 
-export function ConfirmDelete({ accountData, setAccountData, accountId }) {
+interface ConfirmDeleteProps {
+  accountData: Account[];
+  setAccountData: React.Dispatch<React.SetStateAction<Account[]>>;
+  accountId: string;
+}
+
+export function ConfirmDelete({
+  accountData,
+  setAccountData,
+  accountId,
+}: ConfirmDeleteProps) {
   const handleDelete = async () => {
     try {
       // Remove the selected account from localStorage and state
@@ -30,9 +41,14 @@ export function ConfirmDelete({ accountData, setAccountData, accountId }) {
       } else {
         toast.error(response.message); // Failed to increment keyz
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error deleting account:", error);
-      toast.error("Failed to delete account. Please try again.");
+
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to delete account. Please try again.");
+      }
     }
   };
 

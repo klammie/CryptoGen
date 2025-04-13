@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Play, Pause } from "lucide-react";
 import {
   coreFunc,
@@ -6,59 +6,83 @@ import {
   generateRandomInterval,
 } from "../dashboard/trades/TradeSim";
 import { toast } from "sonner";
+import { useMemo } from "react";
 
-const tradeIntervals = new Map<
-  string,
-  { intervalId: NodeJS.Timeout; interval: number }
->();
+interface Account {
+  id: string;
+  type: string;
+  amount: number;
+  image: string;
+}
 
-const startTrading = (account: any) => {
-  const matchedCryptoAcc = cryptoAcc.find((acc) => acc.id === account.id);
-  if (matchedCryptoAcc) {
+type TradeIntervalData = { intervalId: NodeJS.Timeout; interval: number };
+const tradeIntervals = new Map<string, TradeIntervalData>();
+
+// Helper function to safely access localStorage
+const getLocalStorageItem = (key: string): string | null => {
+  return typeof window !== "undefined" ? localStorage.getItem(key) : null;
+};
+
+const setLocalStorageItem = (key: string, value: string) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, value);
+  }
+};
+
+const ToggleButton: React.FC<{ account: Account }> = ({ account }) => {
+  const [isPlaying, setIsPlaying] = useState(
+    () => getLocalStorageItem(`isPlaying-${account.id}`) === "true"
+  );
+
+  // ✅ Optimize by memoizing only `account.id`
+  const memoizedAccountId = useMemo(() => account.id, [account.id]);
+
+  // ✅ Memoize `startTrading` & `stopTrading` to prevent unnecessary function recreation
+  const startTrading = useCallback((account: Account) => {
+    const matchedCryptoAcc = cryptoAcc.find((acc) => acc.id === account.id);
+    if (!matchedCryptoAcc) return;
+
     const interval = generateRandomInterval(matchedCryptoAcc);
-
     const intervalId = setInterval(() => {
       coreFunc(matchedCryptoAcc);
       toast.success(`Trade Executed for ${matchedCryptoAcc.name}!`);
     }, interval);
 
     tradeIntervals.set(account.id, { intervalId, interval });
-  }
-};
+  }, []);
 
-const stopTrading = (account: any) => {
-  const tradeData = tradeIntervals.get(account.id);
-  if (tradeData) {
+  const stopTrading = useCallback((account: Account) => {
+    const tradeData = tradeIntervals.get(account.id);
+    if (!tradeData) return;
     clearInterval(tradeData.intervalId);
     tradeIntervals.delete(account.id);
-    toast.error(`Trading stopped !`);
-  }
-};
-
-const ToggleButton = ({ account }) => {
-  const [isPlaying, setIsPlaying] = useState(() => {
-    return localStorage.getItem(`isPlaying-${account.id}`) === "true";
-  });
-
+    toast.error(`Trading stopped!`);
+  }, []);
+  //eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    localStorage.setItem(`isPlaying-${account.id}`, isPlaying.toString());
+    const storedPlaying = getLocalStorageItem(`isPlaying-${memoizedAccountId}`);
+    if (storedPlaying === "true") {
+      setIsPlaying(true);
+      startTrading(account);
+    }
+  }, [memoizedAccountId, startTrading]); // ✅ Added `startTrading` to dependencies
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    setLocalStorageItem(`isPlaying-${memoizedAccountId}`, isPlaying.toString());
+
     if (isPlaying) {
-      startTrading(account); // Resume trading on mount if active
+      startTrading(account);
     } else {
       stopTrading(account);
     }
-  }, [isPlaying, account]);
-
-  const handleToggleClick = () => {
-    setIsPlaying((prevState) => !prevState);
-  };
+  }, [isPlaying, memoizedAccountId, startTrading, stopTrading]); // ✅ Added both functions
 
   return (
     <div className="mt-2">
       {isPlaying ? (
-        <Pause onClick={handleToggleClick} />
+        <Pause onClick={() => setIsPlaying(false)} />
       ) : (
-        <Play onClick={handleToggleClick} />
+        <Play onClick={() => setIsPlaying(true)} />
       )}
     </div>
   );

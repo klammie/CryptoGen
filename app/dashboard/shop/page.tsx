@@ -1,14 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import AccountCard from "@/app/components/AccountCards";
+import { Account } from "../trades/TradeSim";
 
 const accountData = [
   {
@@ -128,7 +121,7 @@ const accountData = [
   },
 ];
 
-const initialState = {
+const initialState: Record<string, number> = {
   Passive: 1000,
   "Semi-Aggressive": 10000,
   Aggressive: 50000,
@@ -136,22 +129,19 @@ const initialState = {
 
 export default function Shoproute() {
   const [selectedAmounts, setSelectedAmounts] = useState(initialState);
-  const [selectedAccount, setSelectedAccount] = useState(accountData[0]);
+  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null); // ✅ Add state here
 
   const handleAmountChange = (type: string, amount: number) => {
     setSelectedAmounts((prevState) => ({
       ...prevState,
       [type]: amount,
     }));
-    setSelectedAccount(
-      accountData.find(
-        (account) => account.amount === amount && account.type === type
-      )
-    );
   };
 
   const filteredAccounts = accountData.filter(
-    (account) => account.amount === selectedAmounts[account.type]
+    (account) =>
+      account.amount ===
+      selectedAmounts[account.type as keyof typeof selectedAmounts]
   );
 
   return (
@@ -167,7 +157,8 @@ export default function Shoproute() {
           accountData={accountData}
           selectedAmounts={selectedAmounts}
           handleAmountChange={handleAmountChange}
-          setSelectedAccount={setSelectedAccount}
+          selectedAccount={selectedAccount} // ✅ Now correctly defined
+          setSelectedAccount={setSelectedAccount} // ✅ Now correctly defined
         />
       ))}
     </div>

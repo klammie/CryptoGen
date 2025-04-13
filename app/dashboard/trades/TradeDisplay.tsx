@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Trade } from "./TradeSim"; // Adjust the import path as needed
-import { Button } from "@/components/ui/button";
 import { AllTrades } from "@/app/components/AllTrades";
+import Image from "next/image";
 
 const TradeDisplay: React.FC = () => {
   const tradeLogs = JSON.parse(
@@ -34,10 +34,12 @@ const TradeDisplay: React.FC = () => {
             className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 lg:gap-10 px-4 py-4 border-b"
           >
             <div>
-              <img
+              <Image
                 src={`/assets/cryptoimages/${trade.matchedCrypto?.image}`}
-                alt={trade.matchedCrypto?.name}
-                className="w-8 h-8 rounded-lg shadow-md"
+                alt={trade.matchedCrypto?.name ?? "Unknown Crypto"} // ✅ Fallback value
+                height={32}
+                width={32}
+                className="rounded-lg shadow-md"
               />
             </div>
             <div className="flex flex-col justify-between gap-1">
@@ -55,8 +57,15 @@ const TradeDisplay: React.FC = () => {
         ))}
       </div>
 
-      {tradeLogs.length > 5 && !showAll && (
-        <div className="flex justify-center mt-4"></div>
+      {tradeLogs.length > 5 && (
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => setShowAll((prev) => !prev)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+          >
+            {showAll ? "Show Less" : "Show More"}
+          </button>
+        </div>
       )}
     </div>
   );

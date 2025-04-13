@@ -28,8 +28,8 @@ export const CallToAction = () => {
             <span>
               &lsquo;a good strategy and proper risk management&rsquo;
             </span>{" "}
-            are essential, that's just the tip of the iceberg. Dive deeper to
-            uncover more insights below.
+            are essential, that&apos;s just the tip of the iceberg. Dive deeper
+            to uncover more insights below.
           </p>
           {/* ✅ Use Next.js Image component */}
           <motion.div

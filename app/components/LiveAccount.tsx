@@ -5,15 +5,23 @@ import TradeDisplay from "@/app/dashboard/trades/TradeDisplay";
 import { Toaster } from "sonner";
 import ToggleTrade from "@/app/components/ToggleTrade";
 import InvestorConnector from "@/app/components/InvestorConnector";
+import Image from "next/image";
+
+interface Account {
+  id: string;
+  type: string;
+  amount: number;
+  image: string;
+}
 
 const LiveAccount: React.FC = () => {
-  const [accountData, setAccountData] = useState<Array<any>>([]);
+  const [accountData, setAccountData] = useState<Account[]>([]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("LiveAccount");
     console.log("LiveAccount data from localStorage:", storedData); // Debugging
     if (storedData) {
-      const parsedData = JSON.parse(storedData);
+      const parsedData: Account[] = JSON.parse(storedData);
       if (Array.isArray(parsedData)) {
         setAccountData(parsedData);
       }
@@ -39,9 +47,11 @@ const LiveAccount: React.FC = () => {
             <div className="absolute top-5 left-1/2 bg-opacity-80 transform -translate-x-1/2 bg-blue-600 text-white rounded-full px-4 py-1 text-sm font-semibold shadow-md">
               Live
             </div>
-            <img
+            <Image
               src={`/images/${account.image}.png`}
               alt={account.type}
+              width={800}
+              height={600}
               className="w-full h-auto rounded"
             />
             <div className="flex justify-between items-center">

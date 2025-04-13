@@ -6,7 +6,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import CopyField from "./CopyField";
 import CryptoSelector from "./CryptoSelector";
 
 export function Deposit() {

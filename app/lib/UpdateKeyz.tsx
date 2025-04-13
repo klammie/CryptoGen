@@ -1,38 +1,29 @@
 import prisma from "./db";
 import { requireUser } from "./hooks";
 
-export const updateKeyz = async () => {
+export const updateKeyz = async (formData: FormData) => {
+  console.log("Received form data:", formData);
+
   const session = await requireUser();
   const id = session?.user?.id;
 
-  if (!id) {
-    throw new Error("Invalid user session");
-  }
+  if (!id) return { success: false, message: "Invalid user session" };
 
   try {
-    // Fetch the user's current keyz balance
     const user = await prisma.user.findUnique({
       where: { id },
-      select: { keyz: true }, // Only retrieve the keyz field
+      select: { keyz: true },
     });
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+    if (!user) return { success: false, message: "User not found" };
+    if (user.keyz === null)
+      return { success: false, message: "Keyz not initialized" };
 
-    // Check if keyz is greater than 1 before proceeding
-    if (user.keyz <= 1) {
-      return { success: false, message: "Insufficient Keys" };
-    }
+    if (user.keyz <= 1) return { success: false, message: "Insufficient Keys" };
 
-    // Proceed with decrementing keyz
     const updatedAccount = await prisma.user.update({
       where: { id },
-      data: {
-        keyz: {
-          decrement: 1, // Subtract 1 from keyz
-        },
-      },
+      data: { keyz: { decrement: 1 } },
     });
 
     console.log("Keyz decremented successfully:", updatedAccount);

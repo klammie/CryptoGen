@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/public/assets/logosaas.png";
-import { AuthModal } from "./AuthModal";
+import AuthModal from "@/app/components/AuthModal";
 export function Navbar() {
   return (
     <div className="flex py-5 items-center justify-between">
@@ -14,8 +14,4 @@ export function Navbar() {
       <AuthModal />
     </div>
   );
-}
-
-{
-  /*Nav for HomePage*/
 }

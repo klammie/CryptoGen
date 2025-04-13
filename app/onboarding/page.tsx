@@ -12,13 +12,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useActionState } from "react";
 import { OnboardingAction } from "../actions";
-import { useForm } from "@conform-to/react";
+import { SubmissionResult, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { onboardingSchema } from "../lib/zodSchemas";
 import { SubmitButton } from "../components/SubmitButtons";
 
 export default function OnboardingRoute() {
-  const [lastResult, action] = useActionState(OnboardingAction, undefined);
+  const [lastResult, action] = useActionState(
+    (state: SubmissionResult<string[]> | undefined, payload: FormData) =>
+      OnboardingAction(state ?? {}, payload), // Fallback to an empty object if undefined
+    undefined
+  );
 
   const [form, fields] = useForm({
     lastResult,

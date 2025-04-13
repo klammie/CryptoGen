@@ -12,23 +12,26 @@ import {
 import { updateKeyz } from "@/app/lib/UpdateKeyz"; // Ensure correct import path
 import { toast, Toaster } from "sonner";
 import { updateAccbal } from "../lib/updateAccountBalance";
-import { error } from "console";
+import Image from "next/image";
+interface Account {
+  id: string;
+  type: string;
+  amount: number;
+  image: string;
+  features?: string[];
+}
+
 interface AccountCardProps {
   id: string;
   type: string;
   amount: number;
   image: string;
   features: string[];
-  accountData: Array<{
-    id: string;
-    type: string;
-    amount: number;
-    image: string;
-    features: string[];
-  }>;
+  accountData: Account[];
   selectedAmounts: { [key: string]: number };
   handleAmountChange: (type: string, amount: number) => void;
-  setSelectedAccount: (account: any) => void;
+  selectedAccount: Account | null; // ✅ Correct type
+  setSelectedAccount: (account: Account) => void; // Explicitly typed
 }
 
 const AccountCard: React.FC<AccountCardProps> = ({
@@ -40,6 +43,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
   accountData,
   selectedAmounts,
   handleAmountChange,
+  selectedAccount,
   setSelectedAccount,
 }) => {
   const handleAddDemo = async () => {
@@ -146,10 +150,12 @@ const AccountCard: React.FC<AccountCardProps> = ({
   return (
     <div className="card border rounded-lg p-6 m-4 shadow-md">
       <h2 className="text-lg font-semibold pb-2">{type}</h2>
-      <img
+      <Image
         src={`/images/${image}.png`}
-        alt={type}
+        alt={`${selectedAccount ? selectedAccount.type : type}`}
         className="w-full h-auto rounded"
+        width={800}
+        height={400}
       />
       <div className="card-content mt-4">
         <p className="text-gray-600 text-xl font-bold">
@@ -168,8 +174,11 @@ const AccountCard: React.FC<AccountCardProps> = ({
             <button
               className="btn w-full outline dropdown-toggle"
               onClick={(e) => {
-                const menu = e.currentTarget.nextElementSibling;
-                menu.classList.toggle("hidden");
+                const menu = e.currentTarget
+                  .nextElementSibling as HTMLElement | null;
+                if (menu) {
+                  menu.classList.toggle("hidden");
+                }
               }}
             >
               ${selectedAmounts[type]} <span className="caret"></span>
@@ -186,8 +195,13 @@ const AccountCard: React.FC<AccountCardProps> = ({
                         e.preventDefault();
                         handleAmountChange(type, account.amount);
                         setSelectedAccount(account);
-                        const menu = e.currentTarget.closest("ul");
-                        menu.classList.add("hidden");
+
+                        const menu = e.currentTarget.closest(
+                          "ul"
+                        ) as HTMLElement | null;
+                        if (menu) {
+                          menu.classList.add("hidden");
+                        }
                       }}
                     >
                       {account.amount}
@@ -209,12 +223,21 @@ const AccountCard: React.FC<AccountCardProps> = ({
               <Button className="btn btn-primary w-full">Add to Cart</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[360px]">
-              <form action={updateAccbal}>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  const response = await updateAccbal(formData); // Call it manually
+                  console.log(response);
+                }}
+              >
                 <DialogTitle>Checkout</DialogTitle>
                 <DialogHeader className="flex flex-row justify-center items-center">
-                  <img
+                  <Image
                     src={`/images/${image}.png`}
                     alt={`${type} account`}
+                    width={400}
+                    height={200}
                     className="w-1/2 h-auto"
                   />
                 </DialogHeader>

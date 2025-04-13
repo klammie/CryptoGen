@@ -23,7 +23,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from "@radix-ui/react-dropdown-menu";
-
 export async function getData(userId: string) {
   const data = await prisma.user.findUnique({
     where: {
@@ -107,7 +106,7 @@ export default async function DashboardLayout({
                     size="icon"
                     className="rounded-full"
                   >
-                    <img
+                    <Image
                       className="h-full w-full rounded-full"
                       src={session.user?.image as string}
                       alt="Profile Image"
@@ -151,17 +150,4 @@ export default async function DashboardLayout({
       </div>
     </>
   );
-}
-
-{
-  /*Inline server action
-  <form
-    className="w-full"
-    action={async () => {
-      "use server";
-      await signOut();
-    }}
-  >
-    <button className="w-full text-left">Log out</button>
-  </form>*/
 }

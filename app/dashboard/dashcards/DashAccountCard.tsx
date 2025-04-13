@@ -1,11 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+
+interface Account {
+  id: string;
+  type: string;
+  amount: number;
+  image: string;
+}
 
 const DashboardAccountCard: React.FC = () => {
-  const [demoAccountData, setDemoAccountData] = useState<Array<any>>([]);
-  const [liveAccountData, setLiveAccountData] = useState<Array<any>>([]);
-
+  const [demoAccountData, setDemoAccountData] = useState<Account[]>([]);
+  const [liveAccountData, setLiveAccountData] = useState<Account[]>([]);
   useEffect(() => {
     try {
       const storedDemoAccounts = localStorage.getItem("DemoAccount");
@@ -42,10 +49,12 @@ const DashboardAccountCard: React.FC = () => {
               <div className="absolute top-1 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white rounded-full px-4 py-1 text-sm font-semibold bg-opacity-80 shadow-md">
                 Live
               </div>
-              <img
+              <Image
                 src={`/images/${account.image}.png`}
                 alt={account.type}
-                className="w-full h-auto rounded"
+                width={400} // Explicit width
+                height={300} // Explicit height
+                className="rounded"
               />
               <p className="absolute top-10 left-24 transform -translate-x-1/2 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white drop-shadow-md bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
                 ${account.amount.toFixed(2)}
@@ -63,10 +72,12 @@ const DashboardAccountCard: React.FC = () => {
               <div className="absolute top-1 left-1/2 transform bg-opacity-80 -translate-x-1/2 bg-gray-600 text-white rounded-full px-4 py-1 text-sm font-semibold shadow-md">
                 Demo
               </div>
-              <img
+              <Image
                 src={`/images/${account.image}.png`}
                 alt={account.type}
-                className="w-full h-auto rounded"
+                width={400} // Explicit width
+                height={300} // Explicit height
+                className="rounded"
               />
               <p className="absolute top-10 left-24 transform -translate-x-1/2 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white drop-shadow-md bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
                 ${account.amount.toFixed(2)}

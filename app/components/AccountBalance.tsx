@@ -5,7 +5,9 @@ import React, { useEffect, useState } from "react";
 type BalancesProps = {
   userId: string;
 };
-{/*replace local storage with the fetched data from the db*/}
+{
+  /*replace local storage with the fetched data from the db*/
+}
 const Balances: React.FC<BalancesProps> = ({ userId }) => {
   const [userData, setUserData] = useState<{
     userName: string;
@@ -23,8 +25,12 @@ const Balances: React.FC<BalancesProps> = ({ userId }) => {
         }
         const data = await response.json();
         setUserData(data);
-      } catch (error) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       } finally {
         setLoading(false);
       }
@@ -54,5 +60,3 @@ const Balances: React.FC<BalancesProps> = ({ userId }) => {
 };
 
 export default Balances;
-
-

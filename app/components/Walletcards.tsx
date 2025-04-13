@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface CardProps {
-  id: number;
+  id?: number; // ✅ Add id if needed
   title: string;
   content: string;
 }
 
-const Card: React.FC<CardProps> = ({ id, title, content }) => {
+const Card: React.FC<CardProps> = ({ title, content }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = () => {

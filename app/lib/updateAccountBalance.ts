@@ -24,7 +24,7 @@ export const updateAccbal = async (formData: FormData) => {
     }
 
     // Check if the accBal is sufficient
-    if (user.accBal < totalAmount) {
+    if ((user.accBal ?? 0) < totalAmount) {
       throw new Error("Insufficient Funds");
     }
 
@@ -40,8 +40,14 @@ export const updateAccbal = async (formData: FormData) => {
 
     console.log("Account balance updated successfully:", updatedAccount);
     return { success: true, message: "Account balance updated successfully" };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error updating account balance:", error);
-    return { success: false, message: error.message };
+  
+    let message = "An unexpected error occurred"; // ✅ Default error message
+    if (error instanceof Error) {
+      message = error.message; // ✅ TypeScript safely accesses `.message`
+    }
+  
+    return { success: false, message };
   }
 };

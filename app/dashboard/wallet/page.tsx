@@ -17,7 +17,7 @@ export default async function Walletroute() {
         <div className="flex flex-row mx-auto gap-4 xl:gap-8">
           <div className="ml-5 font-semibold">
             <p>Free margin</p>
-            <h2>${(data?.accBal * 1.2).toFixed(1)}</h2>
+            <h2>${((data?.accBal ?? 0) * 1.2).toFixed(1)}</h2>
           </div>
           <div className="font-semibold">
             <p>Access Keys</p>

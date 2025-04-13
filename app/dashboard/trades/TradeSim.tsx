@@ -1,10 +1,31 @@
 // utils/TradeSim.ts
+const updateAccountBalance = (accountId: string, tradeResult: number) => {
+  const updateBalance = (key: string) => {
+    const storedAccounts = localStorage.getItem(key);
+    if (storedAccounts) {
+      const parsedAccounts: Account[] = JSON.parse(storedAccounts);
+      const updatedAccounts = parsedAccounts.map((account) => {
+        if (account.id === accountId) {
+          return { ...account, amount: account.amount + tradeResult };
+        }
+        return account;
+      });
+      localStorage.setItem(key, JSON.stringify(updatedAccounts));
+    }
+  };
 
-import { updateAccountBalance } from "@/app/components/updateAccountBalance";
+  updateBalance("DemoAccount");
+  updateBalance("LiveAccount");
+};
 
 export interface Account {
-  demo: Array<{ id: string }>;
-  live: Array<{ id: string }>;
+  id: string;
+  image: string;
+  type: string;
+  amount: number;
+  features?: string[]; // ✅ Now optional
+  demo?: Array<{ id: string }>;
+  live?: Array<{ id: string }>;
 }
 
 export interface Crypto {
