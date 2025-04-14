@@ -33,13 +33,14 @@ export const CallToAction = () => {
           </p>
           {/* ✅ Use Next.js Image component */}
           <motion.div
-            className="absolute -left-[350px] -top-[137px]"
+            className="absolute -left-[350px] -top-[137px] hidden sm:block" // Hide on small screens
             style={{ translateY }}
           >
             <Image src={starImage} alt="Star Image" width={360} height={360} />
           </motion.div>
+
           <motion.div
-            className="absolute -right-[331px] -top-[19px]"
+            className="absolute -right-[331px] -top-[19px] hidden sm:block" // Hide on small screens
             style={{ translateY }}
           >
             <Image

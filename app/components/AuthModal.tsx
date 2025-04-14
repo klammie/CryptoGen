@@ -28,7 +28,7 @@ export default function AuthModal() {
       {/* Login Trigger Button */}
       {/* Login Trigger Button */}
       <DialogTrigger asChild>
-        <Button className="bg-black" disabled={loading}>
+        <Button className="bg-black text-white" disabled={loading}>
           {loading ? "Signing in..." : "Try for Free"}
         </Button>
       </DialogTrigger>
@@ -40,7 +40,7 @@ export default function AuthModal() {
         <DialogHeader className="flex items-center justify-center flex-row gap-2">
           <Image src={Logo} alt="Logo" className="size-10" />
           <h4 className="text-3xl text-primary font-bold">
-            Crypto<span className="text-black font-semibold">Gen</span>
+            Crypto<span className="text-white font-semibold">Gen</span>
           </h4>
         </DialogHeader>
         {/* Logo Text */}

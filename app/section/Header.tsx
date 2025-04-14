@@ -29,7 +29,7 @@ export const Header = () => {
         <div className="container">
           <div className="flex items-center justify-between">
             {/* Logo Section */}
-            <div className="flex items-center">
+            <div className="flex gap-2 items-center">
               <Image src={Logo} alt="Logo" height={60} width={60} />
               <p className="text-3xl font-semibold text-black">
                 <span className="text-primary font-bold"> Crypto</span>Gen
@@ -61,9 +61,18 @@ export const Header = () => {
       </div>
 
       {/* Mobile Navigation */}
+      {/* Mobile Navigation */}
       {menuOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg py-4">
-          <nav className="flex flex-col items-center gap-4 text-black">
+          {/* Close Button */}
+          <button
+            onClick={toggleMenu}
+            className="absolute top-2 right-4 text-black focus:outline-none"
+          >
+            <X className="h-6 w-6" /> {/* Close icon */}
+          </button>
+
+          <nav className="flex flex-col items-center gap-4 text-black mt-8">
             <a href="/about">About</a>
             <a href="/features">Features</a>
             <a href="/affiliate">Affiliate</a>
