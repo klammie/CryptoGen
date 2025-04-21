@@ -11,6 +11,7 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { incrementKeyz } from "@/app/lib/addKeyz"; // Ensure correct import path
 import { Account } from "@/app/dashboard/trades/TradeSim"; // ✅ Standardized import
+import { deleteDemoAccount } from "@/app/lib/deleteDemoAccount"; // ✅ Import the function
 
 interface ConfirmDeleteProps {
   accountData: Account[];
@@ -25,21 +26,27 @@ export function ConfirmDelete({
 }: ConfirmDeleteProps) {
   const handleDelete = async () => {
     try {
-      // Remove the selected account from localStorage and state
-      const updatedAccounts = accountData.filter(
-        (account) => account.id !== accountId
-      );
-      setAccountData(updatedAccounts); // Update state
+      // ✅ Call database action to delete account
+      const response = await deleteDemoAccount();
 
-      localStorage.setItem("DemoAccount", JSON.stringify(updatedAccounts));
-      toast.success("Account deleted successfully!");
-
-      // Call `incrementKeyz` after successful deletion
-      const response = await incrementKeyz();
       if (response.success) {
-        toast.success(response.message); // Keyz incremented successfully
+        // ✅ Filter out deleted account from state
+        const updatedAccounts = accountData.filter(
+          (account) => account.id !== accountId
+        );
+        setAccountData(updatedAccounts); // ✅ Update state
+
+        toast.success("Demo account deleted successfully!");
+
+        // ✅ Call `incrementKeyz` after deletion
+        const keyResponse = await incrementKeyz();
+        if (keyResponse.success) {
+          toast.success(keyResponse.message); // ✅ Keyz incremented successfully
+        } else {
+          toast.error(keyResponse.message); // ❌ Failed to increment keyz
+        }
       } else {
-        toast.error(response.message); // Failed to increment keyz
+        toast.error(response.error); // ❌ Error from deleteDemoAccount function
       }
     } catch (error: unknown) {
       console.error("Error deleting account:", error);

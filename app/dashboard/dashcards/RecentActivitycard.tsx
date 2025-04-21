@@ -1,17 +1,65 @@
 import React, { useEffect, useState } from "react";
-import { Trade } from "@/app/dashboard/trades/TradeSim"; // Adjust as needed
 import Image from "next/image";
+import { getTradeLogs } from "@/app/lib/getTradeLogs"; // ✅ Import your database function
+import { getUserId } from "@/app/lib/getUserId"; // ✅ Ensure correct user ID retrieval
+
+interface TradeLog {
+  id: string;
+  matchedCrypto?: {
+    id?: string;
+    image: string;
+    name: string;
+  };
+  result: number;
+}
 const RecentActivity: React.FC = () => {
-  const [tradeLogs, setTradeLogs] = useState<Trade[]>([]);
+  const [tradeLogs, setTradeLogs] = useState<TradeLog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setTradeLogs(JSON.parse(localStorage.getItem("TradeLogs") || "[]"));
-    }
+    const fetchTradeLogs = async () => {
+      const userId = await getUserId();
+      if (!userId) {
+        setError("User ID is missing.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await getTradeLogs(userId);
+        if (response.success) {
+          setTradeLogs(response.tradeLogs ?? []);
+        } else {
+          setError(
+            typeof response.error === "string"
+              ? response.error
+              : JSON.stringify(response.error)
+          );
+        }
+      } catch (err) {
+        setError("An unexpected error occurred.");
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTradeLogs();
   }, []);
 
+  if (loading) {
+    return <p className="flex items-center">Loading recent activities...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-600 flex items-center">{error}</p>;
+  }
+
   if (tradeLogs.length === 0) {
-    return <p>Your Activities will appear here.</p>;
+    return (
+      <p className="flex items-center">Your Activities will appear here.</p>
+    );
   }
 
   const recentTrades = tradeLogs.slice(-4);

@@ -15,6 +15,7 @@ const accountData = [
       "Beginner Friendly",
       "5% Deposit Bonus",
     ],
+    isActive: false,
   },
   {
     id: "3000L",
@@ -27,6 +28,7 @@ const accountData = [
       "Beginner Friendly",
       "5% Deposit Bonus",
     ],
+    isActive: false,
   },
   {
     id: "5000L",
@@ -39,6 +41,7 @@ const accountData = [
       "Beginner Friendly",
       "5% Deposit Bonus",
     ],
+    isActive: false,
   },
   {
     id: "10000L",
@@ -52,6 +55,7 @@ const accountData = [
       "Mt4 & Mt5 Investor Account login",
       "10% Deposit Bonus",
     ],
+    isActive: false,
   },
   {
     id: "20000L",
@@ -65,6 +69,7 @@ const accountData = [
       "Mt4 & Mt5 Investor Account login",
       "10% Deposit Bonus",
     ],
+    isActive: false,
   },
   {
     id: "30000L",
@@ -78,6 +83,7 @@ const accountData = [
       "Mt4 & Mt5 Investor Account login",
       "15% Deposit Bonus",
     ],
+    isActive: false,
   },
   {
     id: "50000L",
@@ -92,6 +98,7 @@ const accountData = [
       "Mt4 & Mt5 Investor Account login",
       "20% Deposit Bonus",
     ],
+    isActive: false,
   },
   {
     id: "100000L",
@@ -106,6 +113,7 @@ const accountData = [
       "Mt4 & Mt5 Investor Account login",
       "20% Deposit Bonus",
     ],
+    isActive: false,
   },
   {
     id: "200000L",
@@ -118,6 +126,7 @@ const accountData = [
       "Mt4 & Mt5 Investor Account login",
       "30% Deposit Bonus",
     ],
+    isActive: false,
   },
 ];
 
@@ -129,7 +138,7 @@ const initialState: Record<string, number> = {
 
 export default function Shoproute() {
   const [selectedAmounts, setSelectedAmounts] = useState(initialState);
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null); // ✅ Add state here
+  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
 
   const handleAmountChange = (type: string, amount: number) => {
     setSelectedAmounts((prevState) => ({
@@ -158,7 +167,7 @@ export default function Shoproute() {
           selectedAmounts={selectedAmounts}
           handleAmountChange={handleAmountChange}
           selectedAccount={selectedAccount} // ✅ Now correctly defined
-          setSelectedAccount={setSelectedAccount} // ✅ Now correctly defined
+          setSelectedAccount={setSelectedAccount}
         />
       ))}
     </div>

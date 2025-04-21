@@ -13,13 +13,10 @@ import { updateKeyz } from "@/app/lib/UpdateKeyz"; // Ensure correct import path
 import { toast, Toaster } from "sonner";
 import { updateAccbal } from "../lib/updateAccountBalance";
 import Image from "next/image";
-interface Account {
-  id: string;
-  type: string;
-  amount: number;
-  image: string;
-  features?: string[];
-}
+import { addDemoAccount } from "@/app/lib/addDemoAccount";
+import { addLiveAccount } from "@/app/lib/addLiveAccount";
+import { getUserId } from "../lib/getUserId";
+import { Account } from "../dashboard/trades/TradeSim";
 
 interface AccountCardProps {
   id: string;
@@ -35,7 +32,6 @@ interface AccountCardProps {
 }
 
 const AccountCard: React.FC<AccountCardProps> = ({
-  id,
   type,
   amount,
   image,
@@ -46,81 +42,80 @@ const AccountCard: React.FC<AccountCardProps> = ({
   selectedAccount,
   setSelectedAccount,
 }) => {
-  const handleAddDemo = async () => {
-    const accountData = { id, type, amount, image, features };
-    const storedData = localStorage.getItem("DemoAccount");
-    let demoAccounts = storedData ? JSON.parse(storedData) : [];
-
-    if (!Array.isArray(demoAccounts)) {
-      demoAccounts = [];
-    }
-
-    // Check if account ID already exists
-    const accountExists = demoAccounts.some(
-      (account: { id: string }) => account.id === id
-    );
-    if (accountExists) {
-      toast.error("Account already exists!");
-      return;
-    }
-
+  const handleAddDemo = async (accountData: {
+    type: string;
+    amount: number;
+    image: string;
+    isActive: boolean;
+  }) => {
     try {
-      // Create formData for checking keyz balance
-      const formData = new FormData();
-      const response = await updateKeyz(formData);
+      const userId = await getUserId();
 
-      if (!response.success) {
-        toast.error(response.message); // Shows "Insufficient Keys" if keyz is too low
-        return; // Stop further execution if keys are insufficient
+      if (!userId) {
+        toast.error("User authentication failed.");
+        console.error("User authentication failed.");
+        return;
       }
 
-      // Add the account if keyz is sufficient
-      demoAccounts.push(accountData);
-      localStorage.setItem("DemoAccount", JSON.stringify(demoAccounts));
-      toast.success("Account added successfully!");
+      const response = await addDemoAccount({
+        type: accountData.type,
+        amount: accountData.amount,
+        image: accountData.image,
+        isActive: false,
+      });
+
+      if (response.success) {
+        console.log("Demo account added:", response.newAccount);
+
+        const keyUpdateResponse = await updateKeyz(); // ✅ Check keys after adding
+
+        if (keyUpdateResponse.success) {
+          toast.success("Demo account added successfully!");
+        } else {
+          toast.error("Insufficient keys to add demo account.");
+        }
+      } else {
+        toast.error("Error adding demo account.");
+        console.error("Error adding demo account:", response.error);
+      }
     } catch (error) {
-      console.error("Error processing transaction:", error);
-      toast.error("Transaction failed. Please try again.");
+      toast.error("Unexpected error occurred while adding demo account.");
+      console.error("Error adding demo account:", error);
     }
   };
 
-  const handleAddLive = async () => {
-    const accountData = { id, type, amount, image, features };
-    const storedData = localStorage.getItem("LiveAccount");
-    let liveAccounts = storedData ? JSON.parse(storedData) : [];
-
-    if (!Array.isArray(liveAccounts)) {
-      liveAccounts = [];
-    }
-
-    // Check if account ID already exists
-    const accountExists = liveAccounts.some(
-      (account: { id: string }) => account.id === id
-    );
-    if (accountExists) {
-      toast.error("Account already exists!");
-      return;
-    }
-
-    // Create formData for checking balance
-    const formData = new FormData();
-    formData.set("totalAmount", amount.toString());
-
+  const handleAddLive = async (accountData: {
+    type: string;
+    amount: number;
+    image: string;
+    isActive: boolean;
+  }) => {
     try {
-      // Call `updateAccbal` to check balance before proceeding
-      const response = await updateAccbal(formData);
+      const userId = await getUserId();
+
+      if (!userId) {
+        toast.error("User authentication failed.");
+        console.error("User authentication failed.");
+        return;
+      }
+
+      const response = await addLiveAccount({
+        type: accountData.type,
+        amount: accountData.amount,
+        image: accountData.image,
+        isActive: false,
+      });
 
       if (response.success) {
-        // Balance is sufficient, proceed with adding the account
-        liveAccounts.push(accountData);
-        localStorage.setItem("LiveAccount", JSON.stringify(liveAccounts));
-        toast.success("Account added successfully!");
+        toast.success("Live account added successfully!");
+        console.log("Live account added:", response.newAccount);
       } else {
-        toast.error(response.message); // Shows "Insufficient Funds" if balance is too low
+        toast.error("Insufficient funds to add live account.");
+        console.error("Error adding live account:", response.error);
       }
     } catch (error) {
-      console.error("Error processing transaction:", error);
-      toast.error("Transaction failed. Please try again.");
+      toast.error("Unexpected error occurred while adding live account.");
+      console.error("Error adding live account:", error);
     }
   };
 
@@ -130,7 +125,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
   const [discountAmount, setDiscountAmount] = useState(0);
   const handleApplyDiscount = () => {
     const selectAmount = amount;
-    if (discountCode == "DISCOUNT50") {
+    if (discountCode == "CRYPTOGEN25") {
       setErrorMessage("");
       const discountAmount = selectAmount * 0.15;
       const totalAmount = amount - discountAmount;
@@ -212,12 +207,22 @@ const AccountCard: React.FC<AccountCardProps> = ({
           </div>
         </div>
         <div className="flex flex-row justify-between mt-4">
-          <button
-            className="bg-[#ff7f51] flex-end mr-4 text-white px-4 py-2 rounded hover:bg-orange-600"
-            onClick={handleAddDemo}
-          >
-            <KeyRound />
-          </button>
+          {/*THIS BUTTON ELEMENT SHOULD BE INSIDE A FORM*/}
+          <form>
+            <button
+              className="bg-[#ff7f51] flex-end mr-4 text-white px-4 py-2 rounded hover:bg-orange-600"
+              onClick={() =>
+                handleAddDemo({
+                  type,
+                  amount,
+                  image,
+                  isActive: false,
+                })
+              }
+            >
+              <KeyRound />
+            </button>
+          </form>
           <Dialog>
             <DialogTrigger asChild>
               <Button className="btn btn-primary w-full">Add to Cart</Button>
@@ -278,10 +283,14 @@ const AccountCard: React.FC<AccountCardProps> = ({
                 <input type="hidden" name="totalAmount" value={totalAmount} />
 
                 <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddLive();
-                  }}
+                  onClick={() =>
+                    handleAddLive({
+                      type,
+                      amount,
+                      image,
+                      isActive: false,
+                    })
+                  }
                 >
                   Proceed
                 </Button>

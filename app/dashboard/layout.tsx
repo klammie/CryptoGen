@@ -42,6 +42,7 @@ export async function getData(userId: string) {
   return data;
 }
 
+
 export default async function DashboardLayout({
   children,
 }: {

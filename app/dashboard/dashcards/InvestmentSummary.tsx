@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { getInvestmentSummary } from "@/app/lib/getInvestmentSummary";
 import {
   AreaChart,
   XAxis,
@@ -16,38 +17,24 @@ const InvestmentSummary = () => {
   const [data, setData] = useState<
     Array<{ name: string; loss: number; wins: number }>
   >([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const storedTradeLogs = localStorage.getItem("TradeLogs"); // Match the correct capitalization
+    const fetchData = async () => {
+      const response = await getInvestmentSummary();
 
-      if (storedTradeLogs) {
-        const parsedLogs = JSON.parse(storedTradeLogs) || [];
-
-        // Get the last 100 trade logs directly
-        const latestLogs = parsedLogs.slice(-20);
-        interface TradeLog {
-          matchedCrypto?: {
-            name?: string;
-          };
-          result: number;
-        }
-        // Transform data into expected format: name, wins, loss
-        const formattedData = latestLogs.map((trade: TradeLog) => ({
-          name: trade.matchedCrypto?.name || "Unknown",
-          wins: trade.result >= 1 ? trade.result : 0,
-          loss: trade.result < 1 ? Math.abs(trade.result) : 0,
-        }));
-
-        setData(formattedData);
-      } else {
-        console.warn("No TradeLogs found in localStorage");
-        setData([]);
+      if (!response.success) {
+        setError(response.error ?? null);
+        setLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error("Error parsing TradeLogs from localStorage:", error);
-      setData([]);
-    }
+
+      setData(response.data);
+      setLoading(false);
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -56,7 +43,11 @@ const InvestmentSummary = () => {
         Investment Summary
       </h2>
 
-      {data.length === 0 ? (
+      {loading ? (
+        <p className="text-center text-gray-500">Loading investment data...</p>
+      ) : error ? (
+        <p className="text-center text-red-500">{error}</p>
+      ) : data.length === 0 ? (
         <p className="text-center text-gray-500">
           No investment data available.
         </p>

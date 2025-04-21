@@ -1,8 +1,7 @@
 import prisma from "./db";
 import { requireUser } from "./hooks";
 
-export const updateKeyz = async (formData: FormData) => {
-  console.log("Received form data:", formData);
+export const updateKeyz = async () => {
 
   const session = await requireUser();
   const id = session?.user?.id;

@@ -8,19 +8,40 @@ import { Toaster } from "sonner";
 import { ConfirmDelete } from "./ConfirmDelete";
 import Image from "next/image";
 import { Account } from "@/app/dashboard/trades/TradeSim";
+import { getDemoAccount } from "../lib/getDemoAccount";
 
 const DemoAccount: React.FC = () => {
   const [accountData, setAccountData] = useState<Account[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedData = localStorage.getItem("DemoAccount");
-    if (storedData) {
-      const parsedData = JSON.parse(storedData) as Account[]; // ✅ Explicit casting here
-      if (Array.isArray(parsedData) && parsedData.length > 0) {
-        setAccountData(parsedData);
+    const fetchAccounts = async () => {
+      try {
+        const response = await getDemoAccount(); // ✅ Fetch from DB
+        console.log("Fetched accounts:", response); // 🔍 Debugging log
+
+        if (response.success && Array.isArray(response.demoAccount)) {
+          setAccountData(response.demoAccount); // ✅ Extracts array before setting state
+          console.log("State updated:", response.demoAccount);
+        } else {
+          setAccountData([]); // ✅ Ensures state isn't mistakenly set to an object
+        }
+      } catch (err) {
+        console.error("Error fetching crypto accounts:", err);
+        setError("Failed to fetch account data.");
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    fetchAccounts();
   }, []);
+
+  // ✅ Separate useEffect to monitor state updates
+  useEffect(() => {
+    console.log("State actually updated:", accountData); // 🔥 Logs after state changes
+  }, [accountData]); // ✅ Runs every time `accountData` changes
 
   const safeAccountData = accountData.map((account) => ({
     ...account,
@@ -29,7 +50,15 @@ const DemoAccount: React.FC = () => {
 
   return (
     <div className="mx-auto">
-      {accountData.length === 0 ? (
+      {loading ? (
+        <p className="text-center text-lg font-semibold text-gray-600 mt-10">
+          Loading accounts...
+        </p>
+      ) : error ? (
+        <p className="text-center text-lg font-semibold text-red-600 mt-10">
+          {error}
+        </p>
+      ) : accountData.length === 0 ? (
         <p className="text-center text-lg font-semibold text-gray-600 mt-10">
           No demo accounts found. Add an account to get started!
         </p>

@@ -7,9 +7,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { getPnLStats } from "@/app/lib/getPnLStats"; // ✅ Import server action
 
 const PnLStats = () => {
-  // State for dynamic data
   const [pnlData, setPnLData] = useState([
     { name: "Profit", value: 0 },
     { name: "Loss", value: 0 },
@@ -17,23 +17,31 @@ const PnLStats = () => {
 
   const COLORS = ["#7678ED", "#ff7f51"]; // Colors for Profit and Loss
 
-  // Fetch data from localStorage
+  // ✅ Fetch Profit/Loss Data from Database
   useEffect(() => {
-    const storedProfits = localStorage.getItem("profits");
-    const storedLosses = localStorage.getItem("losses");
+    const fetchPnLData = async () => {
+      try {
+        const response = await getPnLStats(); // ✅ Fetch from DB
 
-    const profits = storedProfits ? parseInt(storedProfits, 10) : 0;
-    const losses = storedLosses ? parseInt(storedLosses, 10) : 0;
+        if (response.success && response.data) {
+          setPnLData([
+            { name: "Profit", value: response.data.profit },
+            { name: "Loss", value: response.data.loss },
+          ]);
+        } else {
+          console.log("Error fetching PnL stats:", response.error);
+        }
+      } catch (error) {
+        console.error("Database fetch error:", error);
+      }
+    };
 
-    setPnLData([
-      { name: "Profit", value: profits },
-      { name: "Loss", value: losses },
-    ]);
+    fetchPnLData();
   }, []);
 
   return (
     <div className="flex flex-col shadow-md rounded-2xl p-2 sm:p-6 lg:p-8 w-full h-full">
-      <h2 className="text-xl font-semibold  text-center">
+      <h2 className="text-xl font-semibold text-center">
         Profits and Loss Statistics
       </h2>
       <ResponsiveContainer width="100%" height={250}>

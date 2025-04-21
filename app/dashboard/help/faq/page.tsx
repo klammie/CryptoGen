@@ -8,7 +8,7 @@ const Home: React.FC = () => {
       id: 1,
       title: "How do I get started with cryptocurrency trading?",
       content:
-        "Choose between a Free demo account or add crypto to your wallet to purchase a Live account. Start trading with just a click—yes, it&apos;s that simple!",
+        "Choose between a Free demo account or add crypto to your wallet to purchase a Live account. Start trading with just a click—yes, its that simple!",
     },
     {
       id: 2,
@@ -26,7 +26,7 @@ const Home: React.FC = () => {
       id: 4,
       title: "Why are the trading accounts so expensive?",
       content:
-        "Our AI is designed to execute trades tailored to the account&apos;s size and type. For instance, an aggressive account will execute more trades at higher risk levels. After conducting extensive tests over the years, we have determined that this is the minimum trading amount required to avoid complete account loss.",
+        "Our AI is designed to execute trades tailored to the account size and type. For instance, an aggressive account will execute more trades at higher risk levels. After conducting extensive tests over the years, we have determined that this is the minimum trading amount required to avoid complete account loss.",
     },
     {
       id: 5,

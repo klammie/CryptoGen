@@ -6,38 +6,24 @@ import {
   generateRandomInterval,
 } from "../dashboard/trades/TradeSim";
 import { toast } from "sonner";
-import { useMemo } from "react";
+import { toggleDemoAccount } from "@/app/lib/toggleDemoAccount";
+import { getUserId } from "@/app/lib/getUserId";
+import prisma from "../lib/db";
 
 interface Account {
   id: string;
   type: string;
   amount: number;
   image: string;
+  isActive: boolean; // ✅ Added isActive field
 }
 
 type TradeIntervalData = { intervalId: NodeJS.Timeout; interval: number };
 const tradeIntervals = new Map<string, TradeIntervalData>();
 
-// Helper function to safely access localStorage
-const getLocalStorageItem = (key: string): string | null => {
-  return typeof window !== "undefined" ? localStorage.getItem(key) : null;
-};
-
-const setLocalStorageItem = (key: string, value: string) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(key, value);
-  }
-};
-
 const ToggleButton: React.FC<{ account: Account }> = ({ account }) => {
-  const [isPlaying, setIsPlaying] = useState(
-    () => getLocalStorageItem(`isPlaying-${account.id}`) === "true"
-  );
+  const [isPlaying, setIsPlaying] = useState<boolean>(account.isActive);
 
-  // ✅ Optimize by memoizing only `account.id`
-  const memoizedAccountId = useMemo(() => account.id, [account.id]);
-
-  // ✅ Memoize `startTrading` & `stopTrading` to prevent unnecessary function recreation
   const startTrading = useCallback((account: Account) => {
     const matchedCryptoAcc = cryptoAcc.find((acc) => acc.id === account.id);
     if (!matchedCryptoAcc) return;
@@ -58,31 +44,52 @@ const ToggleButton: React.FC<{ account: Account }> = ({ account }) => {
     tradeIntervals.delete(account.id);
     toast.error(`Trading stopped!`);
   }, []);
-  //eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    const storedPlaying = getLocalStorageItem(`isPlaying-${memoizedAccountId}`);
-    if (storedPlaying === "true") {
-      setIsPlaying(true);
-      startTrading(account);
-    }
-  }, [memoizedAccountId, startTrading]); // ✅ Added `startTrading` to dependencies
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    setLocalStorageItem(`isPlaying-${memoizedAccountId}`, isPlaying.toString());
 
-    if (isPlaying) {
-      startTrading(account);
-    } else {
-      stopTrading(account);
+  // ✅ Fetch account status from DB only if needed
+  useEffect(() => {
+    if (account.isActive !== undefined) return; // ✅ Skip fetch if `isActive` is already defined
+
+    const fetchAccountStatus = async () => {
+      const userId = await getUserId();
+      if (!userId) return;
+
+      const response = await prisma.demoAccount.findUnique({
+        where: { id: userId },
+        select: { isActive: true },
+      });
+
+      if (response) {
+        setIsPlaying(response.isActive);
+        if (response.isActive) startTrading(account);
+      }
+    };
+
+    fetchAccountStatus();
+  }, [account.id, startTrading]);
+
+  // ✅ Toggle account status in DB with better state handling
+  const handleToggle = async () => {
+    const response = await toggleDemoAccount();
+
+    if (!response.success || !response.updatedAccount) {
+      toast.error("Failed to toggle account status.");
+      return;
     }
-  }, [isPlaying, memoizedAccountId, startTrading, stopTrading]); // ✅ Added both functions
+
+    setIsPlaying((prev) => !prev); // ✅ Valid assignment
+    if (response.updatedAccount.isActive) {
+      startTrading(account); // ✅ Function call
+    } else {
+      stopTrading(account); // ✅ Function call
+    }
+  };
 
   return (
     <div className="mt-2">
       {isPlaying ? (
-        <Pause onClick={() => setIsPlaying(false)} />
+        <Pause onClick={handleToggle} />
       ) : (
-        <Play onClick={() => setIsPlaying(true)} />
+        <Play onClick={handleToggle} />
       )}
     </div>
   );

@@ -39,8 +39,8 @@ export default function AuthModal() {
         {/* Logo Image */}
         <DialogHeader className="flex items-center justify-center flex-row gap-2">
           <Image src={Logo} alt="Logo" className="size-10" />
-          <h4 className="text-3xl text-primary font-bold">
-            Crypto<span className="text-white font-semibold">Gen</span>
+          <h4 className="text-3xl font-bold">
+            Crypto<span className="font-semibold text-primary">Gen</span>
           </h4>
         </DialogHeader>
         {/* Logo Text */}

@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String          @id @default(uuid()) // ✅ Ensure User has an ID
   name          String?
   email         String          @unique
   emailVerified DateTime?
@@ -19,6 +19,7 @@ model User {
   keyz          Int?
   accounts      Account[]
   sessions      Session[]
+  tradeLogs     TradeLogs[] // ✅ Create a relation array linking trades to a user
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
@@ -65,36 +66,52 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
-model cart {
-  id     String @id @default(uuid())
-  type   String
-  amount Int
-  image  String
+model TradeLogs {
+  id     String @id @default(uuid()) // Unique identifier for the trade log
+  userId String // ✅ Explicitly store userId
+  crypto String
+  result Int
+
+  // ✅ Define relationship if `User` model exists
+  user User @relation(fields: [userId], references: [id])
 }
 
-model TradeAccount {
-  id     String @id @default(uuid())
-  type   String
-  image  String
-  amount Int
+model DemoAccount {
+  id       String  @id @unique // Store userId here instead of UUID
+  type     String
+  image    String
+  amount   Int
+  isActive Boolean @default(false)
+}
+
+model LiveAccount {
+  id       String  @id @unique // Store userId here instead of UUID
+  type     String
+  image    String
+  amount   Int
+  isActive Boolean @default(false)
 }
 
 model RecentActivities {
-  id     String @id @default(uuid())
+  id     String @id @default(uuid()) // This can remain UUID if activities are independent
+  userId String @unique
   image  String
   name   String
   amount Int
 }
 
 model ProfitsLoss {
-  id        String @id @default(uuid())
+  id        String @id @unique // Store userId here
   profits   Int
   loss      Int
   breakeven Int
 }
 
-model investmentSummary {
-  id String @id @default(uuid())
+model InvestmentSummary {
+  id         String @id @unique // Store userId
+  cryptoName String // ✅ Stores the name of the cryptocurrency
+  wins       Int // ✅ Tracks winning trades
+  loss       Int // ✅ Tracks losing trades
 }
 
 // Optional for WebAuthn support

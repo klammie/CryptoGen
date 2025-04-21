@@ -31,8 +31,8 @@ export const Header = () => {
             {/* Logo Section */}
             <div className="flex gap-2 items-center">
               <Image src={Logo} alt="Logo" height={60} width={60} />
-              <p className="text-3xl font-semibold text-black">
-                <span className="text-primary font-bold"> Crypto</span>Gen
+              <p className="text-3xl font-semibold">
+                Crypto<span className="text-primary font-bold">Gen</span>
               </p>
             </div>
 

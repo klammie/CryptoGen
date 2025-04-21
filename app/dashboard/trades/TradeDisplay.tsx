@@ -1,13 +1,68 @@
-import React, { useState } from "react";
-import { Trade } from "./TradeSim"; // Adjust the import path as needed
+"use client";
+import React, { useEffect, useState } from "react";
+import { Trade } from "./TradeSim";
 import { AllTrades } from "@/app/components/AllTrades";
 import Image from "next/image";
+import { getTradeLogs } from "@/app/lib/getTradeLogs";
+import { getUserId } from "@/app/lib/getUserId";
 
 const TradeDisplay: React.FC = () => {
-  const tradeLogs = JSON.parse(
-    localStorage.getItem("TradeLogs") || "[]"
-  ) as Trade[];
+  const [tradeLogs, setTradeLogs] = useState<Trade[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    const fetchTradeLogs = async () => {
+      try {
+        const userId = await getUserId();
+        if (!userId) {
+          setError("User authentication failed.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await getTradeLogs(userId);
+        if (response.success && response.tradeLogs) {
+          const formattedTradeLogs: Trade[] = response.tradeLogs.map(
+            (trade) => ({
+              id: trade.id,
+              result: trade.result,
+              userId: trade.userId,
+              name: trade.crypto,
+              matchedCrypto: {
+                id: Number(trade.id), // ✅ Convert string ID to number
+                name: trade.crypto,
+                image: `/assets/cryptoimages/${trade.crypto}.png`,
+              },
+              interval: 0,
+            })
+          );
+          setTradeLogs(formattedTradeLogs);
+        } else {
+          setTradeLogs([]);
+          setError(response.error as string);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to retrieve trade logs.";
+        console.error("Error fetching trade logs:", errorMessage);
+        setError(errorMessage); // ✅ Ensures a string type is passed
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTradeLogs();
+  }, []);
+
+  if (loading) {
+    return <p>Loading trade logs...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
 
   if (tradeLogs.length === 0) {
     return <p>Your Trades will appear here.</p>;
@@ -36,7 +91,7 @@ const TradeDisplay: React.FC = () => {
             <div>
               <Image
                 src={`/assets/cryptoimages/${trade.matchedCrypto?.image}`}
-                alt={trade.matchedCrypto?.name ?? "Unknown Crypto"} // ✅ Fallback value
+                alt={trade.matchedCrypto?.name ?? "Unknown Crypto"}
                 height={32}
                 width={32}
                 className="rounded-lg shadow-md"

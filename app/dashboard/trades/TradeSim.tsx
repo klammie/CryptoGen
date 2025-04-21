@@ -1,22 +1,7 @@
-// utils/TradeSim.ts
-const updateAccountBalance = (accountId: string, tradeResult: number) => {
-  const updateBalance = (key: string) => {
-    const storedAccounts = localStorage.getItem(key);
-    if (storedAccounts) {
-      const parsedAccounts: Account[] = JSON.parse(storedAccounts);
-      const updatedAccounts = parsedAccounts.map((account) => {
-        if (account.id === accountId) {
-          return { ...account, amount: account.amount + tradeResult };
-        }
-        return account;
-      });
-      localStorage.setItem(key, JSON.stringify(updatedAccounts));
-    }
-  };
-
-  updateBalance("DemoAccount");
-  updateBalance("LiveAccount");
-};
+import { updateTradeStats } from "@/app/lib/updateTradeStats";
+import { getUserId } from "@/app/lib/getUserId";
+import { updateTradeAccounts } from "@/app/lib/updateTradeAccounts";
+import { addTradeLog } from "@/app/lib/addTrades";
 
 export interface Account {
   id: string;
@@ -26,6 +11,7 @@ export interface Account {
   features?: string[]; // ✅ Now optional
   demo?: Array<{ id: string }>;
   live?: Array<{ id: string }>;
+  isActive: boolean;
 }
 
 export interface Crypto {
@@ -50,6 +36,7 @@ export interface CryptoAccount {
 }
 
 export interface Trade {
+  name: string;
   matchedCrypto: Crypto | undefined;
   result: number;
   interval: number;
@@ -142,15 +129,16 @@ export const cryptoAcc: CryptoAccount[] = [
   },
 ];
 
-export const cryptoRandomizer = (): Crypto | undefined => {
-  let matchedCrypto: Crypto | undefined;
-  const randomNumber = Math.floor(Math.random() * cryptoData.length) + 1;
-  cryptoData.forEach((crypto) => {
-    if (crypto.id === randomNumber) {
-      matchedCrypto = crypto;
-    }
-  });
-  return matchedCrypto;
+export const cryptoRandomizer = (): Trade => {
+  const randomIndex = Math.floor(Math.random() * cryptoData.length);
+  const matchedCrypto = cryptoData[randomIndex];
+
+  return {
+    matchedCrypto, // ✅ Use the randomized value, do NOT overwrite
+    result: 0,
+    interval: 0,
+    name: matchedCrypto?.name || "", // ✅ Ensure `name` is extracted properly
+  };
 };
 
 export function generateCustomRandomNumber(crypto: CryptoAccount): number {
@@ -174,25 +162,19 @@ export function generateRandomInterval(crypto: CryptoAccount): number {
   return randomInterval;
 }
 
-export const updateTradeStats = (result: number): void => {
-  // Retrieve current counts from localStorage or initialize them
-  const storedLosses = localStorage.getItem("losses");
-  const storedProfits = localStorage.getItem("profits");
+// Ensure user identification
 
-  const losses = storedLosses ? parseInt(storedLosses, 10) : 0; // Default to 0 if no value is found
-  const profits = storedProfits ? parseInt(storedProfits, 10) : 0; // Default to 0 if no value is found
-
-  // Check the result and update the respective counter
-  if (result < 1) {
-    localStorage.setItem("losses", (losses + 1).toString());
-    console.log(`Updated losses count: ${losses + 1}`);
-  } else {
-    localStorage.setItem("profits", (profits + 1).toString());
-    console.log(`Updated profits count: ${profits + 1}`);
+export const updateTradeStatsLc = async (result: number): Promise<void> => {
+  const userId = await getUserId();
+  if (!userId) {
+    console.error("User ID is missing");
+    return;
   }
+
+  await updateTradeStats(userId, result);
 };
 
-export const coreFunc = (account: CryptoAccount): void => {
+export const coreFunc = async (account: CryptoAccount): Promise<void> => {
   console.log("Account passed to coreFunc:", account);
 
   // Ensure account has required properties
@@ -205,25 +187,24 @@ export const coreFunc = (account: CryptoAccount): void => {
     return;
   }
 
-  const matchedCrypto = cryptoRandomizer();
+  const matchedCrypto = cryptoRandomizer() ?? {
+    id: "default",
+    name: "Unknown Crypto",
+  }; // ✅ Ensures it's always defined
   const result = generateCustomRandomNumber(account);
   const interval = generateRandomInterval(account);
 
   // Update losses or profits based on the trade result
-  updateTradeStats(result);
+  updateTradeStatsLc(result);
 
-  // Retrieve existing trades from localStorage
-  const storedTrades = localStorage.getItem("TradeLogs");
-  const tradeLogs: Trade[] = storedTrades ? JSON.parse(storedTrades) : [];
+  // ✅ Store trade log in the database instead of localStorage
+  await addTradeLog({ matchedCrypto, result, interval });
 
-  // Write data to the trade logs
-  tradeLogs.push({ matchedCrypto, result, interval });
-  localStorage.setItem("TradeLogs", JSON.stringify(tradeLogs));
+  // ✅ Update the account balance based on trade result in the database
+  await updateTradeAccounts(account.id, result);
 
-  // **Update the account balance based on trade result**
-  updateAccountBalance(account.id, result);
+  console.log("Trade log recorded and account balance updated!");
 };
-
 export const TradeSimulation = (cryptoAcc: CryptoAccount[]): void => {
   // Retrieve DemoAccount data from localStorage
   const storedDemoAccounts = localStorage.getItem("DemoAccount");

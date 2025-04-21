@@ -36,7 +36,9 @@ const Affiliate = () => {
               promoting our platform. By joining our program, you can earn
               generous commissions every time a user uses your promo code.
             </p>
-            <Button>Sign up</Button>
+            <a href="/home">
+              <Button>Sign up</Button>
+            </a>
           </div>
         </div>
         <div className="flex mt-4 flex-col gap-5 md:flex-row">
