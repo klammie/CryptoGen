@@ -5,6 +5,7 @@ import Image from "next/image"; // ✅ Restored optimized Next.js Image componen
 
 interface Account {
   id: string;
+  mode: string;
   type: string;
   amount: number;
   image: string;
@@ -22,7 +23,7 @@ const DashboardAccountCard: React.FC = () => {
         if (response.success && response.account) {
           setAccountData({
             ...response.account,
-            type: response.account.type ?? "Unknown", // ✅ Ensure a valid type is set
+            mode: response.account.mode ?? "Unknown", // ✅ Ensure a valid mode is set
           });
         } else {
           setAccountData(null);
@@ -53,20 +54,20 @@ const DashboardAccountCard: React.FC = () => {
           <div className="relative shadow-lg rounded-xl overflow-hidden bg-white">
             <div
               className={`absolute top-1 left-1/2 transform -translate-x-1/2  py-1 bg-opacity-80 rounded-full px-4 text-sm font-semibold shadow-md ${
-                accountData.type === "Live"
+                accountData.mode === "Live"
                   ? "bg-blue-600 text-white"
-                  : accountData.type === "Demo"
+                  : accountData.mode === "Demo"
                   ? "bg-gray-600 text-white"
-                  : "bg-red-600 text-white" // ✅ Fallback for undefined type
+                  : "bg-red-600 text-white" // ✅ Fallback for undefined mode
               }`}
             >
-              {accountData.type}
+              {accountData.mode}
             </div>
             <Image
               src={`/images/${accountData.image}.png`}
-              alt={accountData.type}
-              width={400} // ✅ Explicit width
-              height={300} // ✅ Explicit height
+              alt={accountData.type} // ✅ Replace `type` with `mode`
+              width={400}
+              height={300}
               className="rounded"
             />
             <p className="absolute top-10 left-24 transform -translate-x-1/2 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white drop-shadow-md bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">

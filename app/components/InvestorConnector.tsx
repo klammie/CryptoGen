@@ -39,13 +39,13 @@ const MyDialog = () => {
           <div className="flex flex-col justify-evenly p-3 bg-gray-100 rounded-md">
             <div className="grid grid-cols-2 gap-4 text-gray-700">
               <p className="font-medium">Login:</p>
-              <p className="font-semibold text-gray-900">162604092</p>
+              <p className="font-semibold text-gray-900">163596899</p>
 
               <p className="font-medium">Password:</p>
-              <p className="font-semibold text-gray-900">brq5xdt</p>
+              <p className="font-semibold text-gray-900">s1eozec</p>
 
               <p className="font-medium">Investor:</p>
-              <p className="font-semibold text-gray-900">owjb4uf</p>
+              <p className="font-semibold text-gray-900">7pwqbot</p>
             </div>
           </div>
 

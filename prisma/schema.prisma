@@ -82,6 +82,7 @@ model DemoAccount {
   image    String
   amount   Int
   isActive Boolean @default(false)
+  cryptoId String?
 }
 
 model LiveAccount {
@@ -90,6 +91,7 @@ model LiveAccount {
   image    String
   amount   Int
   isActive Boolean @default(false)
+  cryptoId String?
 }
 
 model RecentActivities {

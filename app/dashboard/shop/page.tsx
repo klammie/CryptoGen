@@ -168,6 +168,7 @@ export default function Shoproute() {
           handleAmountChange={handleAmountChange}
           selectedAccount={selectedAccount} // ✅ Now correctly defined
           setSelectedAccount={setSelectedAccount}
+          cryptoId={item.id}
         />
       ))}
     </div>

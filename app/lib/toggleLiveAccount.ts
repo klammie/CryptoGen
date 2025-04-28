@@ -1,6 +1,9 @@
 "use server";
 import prisma from "./db";
 import { getUserId } from "./getUserId";
+import { TradeSimulation } from "./tradeSimulation";
+import { getCryptoAccount } from "@/app/lib/getCryptoAccount";
+import { CryptoAccount, cryptoAcc } from "@/app/dashboard/trades/TradeSim";
 
 export async function toggleLiveAccount() {
   try {
@@ -8,11 +11,9 @@ export async function toggleLiveAccount() {
     const userId = await getUserId();
 
     if (!userId) {
+      console.error("User authentication failed");
       return { success: false, error: "User authentication failed" };
     }
-
-    // ✅ Determine the correct Prisma model
-    
 
     // ✅ Fetch the current account
     const account = await prisma.liveAccount.findUnique({
@@ -21,6 +22,7 @@ export async function toggleLiveAccount() {
     });
 
     if (!account) {
+      console.error("Account not found");
       return { success: false, error: "Account not found" };
     }
 
@@ -30,7 +32,47 @@ export async function toggleLiveAccount() {
       data: { isActive: !account.isActive },
     });
 
-    console.log(`Updated ${updatedAccount} account status: ${updatedAccount.isActive ? "Active" : "Inactive"}`);
+    console.log(
+      `Updated account status: ${updatedAccount.isActive ? "Active" : "Inactive"}`
+    );
+
+    if (updatedAccount.isActive) {
+      // ✅ Fetch crypto accounts
+      const response = await getCryptoAccount();
+
+      if (response.success && response.account) {
+        const userAccounts = Array.isArray(response.account)
+          ? response.account
+          : [response.account];
+
+        // ✅ Map fetched accounts to `CryptoAccount` type
+        const formattedAccounts = cryptoAcc
+        .map((crypto): CryptoAccount | undefined => {
+          const matchedAccount = userAccounts.find((account) => account.cryptoId?.trim() === crypto.cryptoId?.trim());
+          
+          if (matchedAccount) {
+            return {
+              id: matchedAccount.id,
+              cryptoId: matchedAccount.cryptoId,
+              type: matchedAccount.type,
+              image: matchedAccount.image,
+              amount: matchedAccount.amount,
+              isActive: matchedAccount.isActive,
+              name: matchedAccount.name || crypto.name,
+              specialKey: crypto.specialKey,
+              waitTime: crypto.waitTime,
+            };
+          }
+          return undefined; // Use undefined instead of null to avoid type mismatch
+        })
+        .filter((acc): acc is CryptoAccount => !!acc); // ✅ Type assertion ensures only valid CryptoAccount objects remain
+        TradeSimulation(formattedAccounts); // Pass formatted accounts
+      }
+
+      console.log("Trade Initiated");
+    } else {
+      console.warn("Account is now inactive");
+    }
 
     return { success: true, updatedAccount };
   } catch (error) {

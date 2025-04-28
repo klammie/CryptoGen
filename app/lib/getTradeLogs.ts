@@ -6,8 +6,7 @@ export async function getTradeLogs(userId: string) {
     if (!userId) return { success: false, error: "Missing userId" };
 
     const tradeLogs = await prisma.tradeLogs.findMany({
-      where: { id: userId }, // Ensure you're filtering by userId, not id
-      
+      where: { userId }, // ✅ Correct: Filtering by userId
     });
 
     return { success: true, tradeLogs };

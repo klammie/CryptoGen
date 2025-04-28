@@ -22,10 +22,13 @@ const DemoAccount: React.FC = () => {
         console.log("Fetched accounts:", response); // 🔍 Debugging log
 
         if (response.success && Array.isArray(response.demoAccount)) {
-          setAccountData(response.demoAccount); // ✅ Extracts array before setting state
           console.log("State updated:", response.demoAccount);
-        } else {
-          setAccountData([]); // ✅ Ensures state isn't mistakenly set to an object
+          setAccountData(
+            response.demoAccount.map((account) => ({
+              ...account,
+              cryptoId: account.cryptoId ?? undefined, // ✅ Converts null to undefined
+            }))
+          );
         }
       } catch (err) {
         console.error("Error fetching crypto accounts:", err);

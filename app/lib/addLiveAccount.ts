@@ -2,7 +2,7 @@
 import prisma from "./db";
 import { getUserId } from "./getUserId";
 
-export async function addLiveAccount(accountData: { type: string; amount: number; image: string, isActive: boolean, }) {
+export async function addLiveAccount(accountData: { type: string; amount: number; image: string, isActive: boolean, cryptoId: string }) {
   try {
     // ✅ Get authenticated user ID server-side
     const userId = await getUserId();
@@ -21,6 +21,7 @@ export async function addLiveAccount(accountData: { type: string; amount: number
         amount: accountData.amount,
         image: accountData.image,
         isActive: false,
+        cryptoId: accountData.cryptoId
       },
     });
 

@@ -12,7 +12,7 @@ import {
 import { Toaster, toast } from "sonner";
 import AccountSelector from "./AccountSelector";
 import { CashoutAction } from "../lib/CashoutAction"; // Adjust path accordingly
-
+import { deleteLiveAccount } from "../lib/deleteLiveAccount";
 export function Cashout() {
   const [accBal, setAccBal] = useState<number>(1000); // Initialize balance with a sample value
 
@@ -27,15 +27,27 @@ export function Cashout() {
 
     try {
       const updatedAccount = await CashoutAction(formData);
+
+      if (!updatedAccount) {
+        throw new Error("Cashout failed or returned an error");
+      }
+
       console.log("Updated account balance:", updatedAccount);
       setAccBal((prev) => prev + amount); // Increment accBal after successful transaction
-      toast.success("Funds successfully transferred!");
+
+      // ✅ Safely attempt to delete live account after success
+      try {
+        await deleteLiveAccount();
+        toast.success("Funds successfully transferred!");
+      } catch (deleteError) {
+        console.error("Error deleting live account:", deleteError);
+        toast.error("Funds transferred, but failed to delete live account");
+      }
     } catch (error) {
       console.error("Error updating account balance:", error);
       toast.error("Failed to transfer funds");
     }
   };
-
   return (
     <div>
       <Dialog>

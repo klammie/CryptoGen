@@ -2,7 +2,6 @@ import prisma from "./db";
 import { requireUser } from "./hooks";
 
 export const updateKeyz = async () => {
-
   const session = await requireUser();
   const id = session?.user?.id;
 
@@ -18,7 +17,7 @@ export const updateKeyz = async () => {
     if (user.keyz === null)
       return { success: false, message: "Keyz not initialized" };
 
-    if (user.keyz <= 1) return { success: false, message: "Insufficient Keys" };
+    if (user.keyz < 1) return { success: false, message: "Insufficient Keys" };
 
     const updatedAccount = await prisma.user.update({
       where: { id },

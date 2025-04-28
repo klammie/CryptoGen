@@ -88,7 +88,7 @@ export function AllTrades() {
               >
                 <Image
                   src={`/assets/cryptoimages/${trade.matchedCrypto?.image}`}
-                  alt={trade.matchedCrypto?.name ?? "Unknown Crypto"}
+                  alt={trade.matchedCrypto?.name ?? "Unknown"}
                   width={32}
                   height={32}
                   className="rounded-lg shadow-md"

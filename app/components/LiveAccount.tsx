@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import ToggleTrade from "@/app/components/ToggleTrade";
+import ToggleTrade from "@/app/components/LiveToggleTrade";
 import TradeDisplay from "@/app/dashboard/trades/TradeDisplay";
 import { Toaster } from "sonner";
 import InvestorConnector from "@/app/components/InvestorConnector";
@@ -21,8 +21,12 @@ const LiveAccount: React.FC = () => {
         console.log("Fetched accounts:", response); // 🔍 Debugging log
 
         if (response.success && Array.isArray(response.liveAccount)) {
-          setAccountData(response.liveAccount); // ✅ Extracts array before setting state
-          console.log("State updated:", response.liveAccount);
+          setAccountData(
+            response.liveAccount.map((account) => ({
+              ...account,
+              cryptoId: account.cryptoId ?? undefined, // ✅ Converts null to undefined
+            }))
+          );
         } else {
           setAccountData([]); // ✅ Ensures state isn't mistakenly set to an object
         }

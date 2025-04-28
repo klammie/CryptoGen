@@ -27,8 +27,9 @@ interface AccountCardProps {
   accountData: Account[];
   selectedAmounts: { [key: string]: number };
   handleAmountChange: (type: string, amount: number) => void;
-  selectedAccount: Account | null; // ✅ Correct type
-  setSelectedAccount: (account: Account) => void; // Explicitly typed
+  selectedAccount: Account | null;
+  setSelectedAccount: (account: Account) => void;
+  cryptoId: string; // ✅ Add this property
 }
 
 const AccountCard: React.FC<AccountCardProps> = ({
@@ -41,46 +42,50 @@ const AccountCard: React.FC<AccountCardProps> = ({
   handleAmountChange,
   selectedAccount,
   setSelectedAccount,
+  cryptoId,
 }) => {
   const handleAddDemo = async (accountData: {
     type: string;
     amount: number;
     image: string;
     isActive: boolean;
+    cryptoId: string;
   }) => {
     try {
       const userId = await getUserId();
 
       if (!userId) {
-        toast.error("User authentication failed.");
         console.error("User authentication failed.");
         return;
       }
+
+      // ✅ Run `updateKeyz` first and check if it's successful
+      const keyUpdateResponse = await updateKeyz();
+      if (!keyUpdateResponse.success) {
+        console.warn("Insufficient keys to add demo account.");
+        return; // Exit function if key update fails
+      }
+
+      // ✅ Proceed with `addDemoAccount` only if `updateKeyz` is successful
+      const cryptoIdValue = String(accountData.cryptoId); // Ensure it's a string
 
       const response = await addDemoAccount({
         type: accountData.type,
         amount: accountData.amount,
         image: accountData.image,
         isActive: false,
+        cryptoId: cryptoIdValue,
       });
 
       if (response.success) {
-        console.log("Demo account added:", response.newAccount);
-
-        const keyUpdateResponse = await updateKeyz(); // ✅ Check keys after adding
-
-        if (keyUpdateResponse.success) {
-          toast.success("Demo account added successfully!");
-        } else {
-          toast.error("Insufficient keys to add demo account.");
-        }
+        console.log("Demo account added successfully:", response.newAccount);
+        toast.success("Demo account added succesfully");
       } else {
-        toast.error("Error adding demo account.");
         console.error("Error adding demo account:", response.error);
       }
     } catch (error) {
-      toast.error("Unexpected error occurred while adding demo account.");
       console.error("Error adding demo account:", error);
+      toast.error("Error adding demo account");
     }
   };
 
@@ -89,12 +94,12 @@ const AccountCard: React.FC<AccountCardProps> = ({
     amount: number;
     image: string;
     isActive: boolean;
+    cryptoId: string;
   }) => {
     try {
       const userId = await getUserId();
 
       if (!userId) {
-        toast.error("User authentication failed.");
         console.error("User authentication failed.");
         return;
       }
@@ -104,17 +109,17 @@ const AccountCard: React.FC<AccountCardProps> = ({
         amount: accountData.amount,
         image: accountData.image,
         isActive: false,
+        cryptoId: accountData.cryptoId,
       });
 
       if (response.success) {
-        toast.success("Live account added successfully!");
         console.log("Live account added:", response.newAccount);
+        toast.success("Live account added");
       } else {
-        toast.error("Insufficient funds to add live account.");
         console.error("Error adding live account:", response.error);
+        toast.error("Insufficient Funds");
       }
     } catch (error) {
-      toast.error("Unexpected error occurred while adding live account.");
       console.error("Error adding live account:", error);
     }
   };
@@ -210,13 +215,14 @@ const AccountCard: React.FC<AccountCardProps> = ({
           {/*THIS BUTTON ELEMENT SHOULD BE INSIDE A FORM*/}
           <form>
             <button
-              className="bg-[#ff7f51] flex-end mr-4 text-white px-4 py-2 rounded hover:bg-orange-600"
+              className="bg-orange-500 flex-end mr-4 text-white px-4 py-2 rounded hover:bg-orange-600"
               onClick={() =>
                 handleAddDemo({
                   type,
                   amount,
                   image,
                   isActive: false,
+                  cryptoId, // ✅ Now `cryptoId` is correctly recognized
                 })
               }
             >
@@ -289,6 +295,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
                       amount,
                       image,
                       isActive: false,
+                      cryptoId,
                     })
                   }
                 >

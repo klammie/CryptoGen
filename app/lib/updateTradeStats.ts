@@ -1,4 +1,4 @@
-import  prisma  from "@/app/lib/db";
+import prisma from "@/app/lib/db";
 
 export async function updateTradeStats(userId: string, result: number) {
   try {
@@ -6,14 +6,19 @@ export async function updateTradeStats(userId: string, result: number) {
       throw new Error("User ID is missing");
     }
 
-    const updateValue = result > 0 ? { profits: { increment: 1 } } : { profits: { decrement: 1 } };
-
-    await prisma.profitsLoss.update({
-      where: { id: userId },
-      data: updateValue,
-    });
-
-    console.log(`Updated trade stats: ${result > 0 ? "Profits +1" : "Profits -1"}`);
+    if (result > 0) {
+      await prisma.profitsLoss.update({
+        where: { id: userId },
+        data: { profits: { increment: 1 } },
+      });
+      console.log("Profits incremented by 1");
+    } else {
+      await prisma.profitsLoss.update({
+        where: { id: userId },
+        data: { loss: { increment: 1 } },
+      });
+      console.log("Loss incremented by 1");
+    }
   } catch (error) {
     console.error("Database update error:", error);
   }

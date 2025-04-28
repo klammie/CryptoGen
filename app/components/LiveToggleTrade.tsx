@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { toast, Toaster } from "sonner";
-import { toggleDemoAccount } from "@/app/lib/toggleDemoAccount";
+import { toggleLiveAccount } from "@/app/lib/toggleLiveAccount";
 
 interface Account {
   id: string;
@@ -12,7 +12,7 @@ interface Account {
   cryptoId?: string;
 }
 
-const DemoToggleButton: React.FC<{ account: Account }> = ({ account }) => {
+const LiveToggleButton: React.FC<{ account: Account }> = ({ account }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(
     account?.isActive ?? false
   );
@@ -21,7 +21,7 @@ const DemoToggleButton: React.FC<{ account: Account }> = ({ account }) => {
     // ✅ Optimistically update the UI before waiting for the API response
     setIsPlaying((prev) => !prev);
 
-    const response = await toggleDemoAccount();
+    const response = await toggleLiveAccount();
 
     if (!response.success || !response.updatedAccount) {
       toast.error("Failed to toggle account status.");
@@ -52,4 +52,4 @@ const DemoToggleButton: React.FC<{ account: Account }> = ({ account }) => {
   );
 };
 
-export default DemoToggleButton;
+export default LiveToggleButton;

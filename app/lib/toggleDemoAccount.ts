@@ -1,6 +1,9 @@
 "use server";
 import prisma from "./db";
 import { getUserId } from "./getUserId";
+import { TradeSimulation } from "./tradeSimulation";
+import { getCryptoAccount } from "@/app/lib/getCryptoAccount";
+import { CryptoAccount } from "@/app/dashboard/trades/TradeSim";
 
 export async function toggleDemoAccount() {
   try {
@@ -10,9 +13,6 @@ export async function toggleDemoAccount() {
     if (!userId) {
       return { success: false, error: "User authentication failed" };
     }
-
-    // ✅ Determine the correct Prisma model
-    
 
     // ✅ Fetch the current account
     const account = await prisma.demoAccount.findUnique({
@@ -30,7 +30,41 @@ export async function toggleDemoAccount() {
       data: { isActive: !account.isActive },
     });
 
-    console.log(`Updated ${updatedAccount} account status: ${updatedAccount.isActive ? "Active" : "Inactive"}`);
+    console.log(
+      `Updated account status: ${updatedAccount.isActive ? "Active" : "Inactive"}`
+    );
+
+    if (updatedAccount.isActive) {
+      // ✅ Fetch crypto accounts
+      const response = await getCryptoAccount();
+
+      if (response.success && response.account) {
+        const userAccounts = Array.isArray(response.account)
+          ? response.account
+          : [response.account];
+
+        // ✅ Map fetched accounts to `CryptoAccount` type
+        const formattedAccounts: CryptoAccount[] = userAccounts.map((acc) => ({
+          id: acc.id,
+          type: acc.type,
+          image: acc.image,
+          amount: acc.amount,
+          isActive: acc.isActive,
+          name: acc.name || "Unknown", // Provide default values if missing
+          specialKey:
+            typeof acc.specialKey === "object"
+              ? acc.specialKey
+              : { min: 0, max: 100 }, // ✅ Ensures valid specialKey format
+          waitTime:
+            typeof acc.waitTime === "object"
+              ? acc.waitTime
+              : { min: 5000, max: 10000 }, // ✅ Ensures valid waitTime format
+              cryptoId: acc.cryptoId,
+        }));
+
+        TradeSimulation(formattedAccounts); // Pass formatted accounts
+      }
+    }
 
     return { success: true, updatedAccount };
   } catch (error) {

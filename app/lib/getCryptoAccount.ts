@@ -13,9 +13,9 @@ export async function getCryptoAccount() {
     const demoAccount = await prisma.demoAccount.findUnique({ where: { id: userId } });
 
     if (liveAccount) {
-      return { success: true, account: { ...liveAccount, type: "Live" } }; // ✅ Explicit type
+      return { success: true, account: { ...liveAccount, mode: "Live" } }; // ✅ Explicit type
     } else if (demoAccount) {
-      return { success: true, account: { ...demoAccount, type: "Demo" } }; // ✅ Explicit type
+      return { success: true, account: { ...demoAccount, mode: "Demo" } }; // ✅ Explicit type
     } else {
       return { success: false, error: "Account not found" };
     }

@@ -12,6 +12,7 @@ export interface Account {
   demo?: Array<{ id: string }>;
   live?: Array<{ id: string }>;
   isActive: boolean;
+  cryptoId?: string;
 }
 
 export interface Crypto {
@@ -24,6 +25,7 @@ export interface CryptoAccount {
   name: string;
   id: string;
   image: string;
+  type?: string;
   amount: number;
   specialKey: {
     min: number;
@@ -33,6 +35,8 @@ export interface CryptoAccount {
     min: number;
     max: number;
   };
+  isActive: boolean;
+  cryptoId?: string;
 }
 
 export interface Trade {
@@ -62,6 +66,8 @@ export const cryptoAcc: CryptoAccount[] = [
     amount: 1000,
     specialKey: { min: 4, max: 2 },
     waitTime: { min: 7000, max: 9800 },
+    cryptoId: "1000L",
+    isActive: false,
   },
   {
     name: "Passive",
@@ -70,6 +76,8 @@ export const cryptoAcc: CryptoAccount[] = [
     amount: 3000,
     specialKey: { min: 8, max: 5 },
     waitTime: { min: 5000, max: 8000 },
+    cryptoId: "3000L",
+    isActive: false,
   },
   {
     name: "Passive",
@@ -78,6 +86,8 @@ export const cryptoAcc: CryptoAccount[] = [
     amount: 5000,
     specialKey: { min: 9, max: 12 },
     waitTime: { min: 4700, max: 7000 },
+    cryptoId: "5000L",
+    isActive: false,
   },
   {
     name: "Semi-Aggressive",
@@ -86,22 +96,28 @@ export const cryptoAcc: CryptoAccount[] = [
     amount: 10000,
     specialKey: { min: 21, max: 20 },
     waitTime: { min: 2500, max: 5100 },
-  },
-  {
-    name: "Semi-Aggressive",
-    id: "15000L",
-    image: "",
-    amount: 15000,
-    specialKey: { min: 36, max: 40 },
-    waitTime: { min: 2200, max: 4700 },
+    cryptoId: "10000L",
+    isActive: false,
   },
   {
     name: "Semi-Aggressive",
     id: "20000L",
     image: "",
     amount: 20000,
+    specialKey: { min: 36, max: 40 },
+    waitTime: { min: 2200, max: 4700 },
+    cryptoId: "20000L",
+    isActive: false,
+  },
+  {
+    name: "Semi-Aggressive",
+    id: "30000L",
+    image: "",
+    amount: 30000,
     specialKey: { min: 41, max: 60 },
     waitTime: { min: 2100, max: 4500 },
+    cryptoId: "30000L",
+    isActive: false,
   },
   {
     name: "Aggressive",
@@ -110,6 +126,8 @@ export const cryptoAcc: CryptoAccount[] = [
     amount: 50000,
     specialKey: { min: 201, max: 300 },
     waitTime: { min: 1500, max: 3400 },
+    cryptoId: "50000L",
+    isActive: false,
   },
   {
     name: "Aggressive",
@@ -118,6 +136,8 @@ export const cryptoAcc: CryptoAccount[] = [
     amount: 100000,
     specialKey: { min: 501, max: 500 },
     waitTime: { min: 1300, max: 3200 },
+    cryptoId: "100000L",
+    isActive: false,
   },
   {
     name: "Aggressive",
@@ -126,6 +146,8 @@ export const cryptoAcc: CryptoAccount[] = [
     amount: 200000,
     specialKey: { min: 4001, max: 1000 },
     waitTime: { min: 1100, max: 2800 },
+    cryptoId: "200000L",
+    isActive: false,
   },
 ];
 
@@ -176,17 +198,24 @@ export const updateTradeStatsLc = async (result: number): Promise<void> => {
 
 export const coreFunc = async (account: CryptoAccount): Promise<void> => {
   console.log("Account passed to coreFunc:", account);
+  console.log("Account specialKey before validation:", account.specialKey);
 
   // Ensure account has required properties
-  if (
-    !account.specialKey ||
-    typeof account.specialKey.min !== "number" ||
-    typeof account.specialKey.max !== "number"
-  ) {
-    console.error("Invalid account data:", account);
-    return;
-  }
 
+  if (typeof account.specialKey === "string") {
+    console.warn(
+      `specialKey is a string: ${account.specialKey}, checking validity...`
+    );
+
+    const numericValue = Number(account.specialKey);
+
+    if (!isNaN(numericValue)) {
+      account.specialKey = { min: numericValue, max: numericValue }; // ✅ Convert valid number
+    } else {
+      console.error("Invalid specialKey format:", account.specialKey);
+      account.specialKey = { min: 0, max: 100 }; // ✅ Assign default values instead
+    }
+  }
   const matchedCrypto = cryptoRandomizer() ?? {
     id: "default",
     name: "Unknown Crypto",
@@ -195,42 +224,13 @@ export const coreFunc = async (account: CryptoAccount): Promise<void> => {
   const interval = generateRandomInterval(account);
 
   // Update losses or profits based on the trade result
-  updateTradeStatsLc(result);
 
   // ✅ Store trade log in the database instead of localStorage
   await addTradeLog({ matchedCrypto, result, interval });
 
   // ✅ Update the account balance based on trade result in the database
   await updateTradeAccounts(account.id, result);
+  updateTradeStatsLc(result);
 
   console.log("Trade log recorded and account balance updated!");
-};
-export const TradeSimulation = (cryptoAcc: CryptoAccount[]): void => {
-  // Retrieve DemoAccount data from localStorage
-  const storedDemoAccounts = localStorage.getItem("DemoAccount");
-  const demoAccounts: Array<{ id: { demo: string } }> = storedDemoAccounts
-    ? JSON.parse(storedDemoAccounts)
-    : [];
-
-  demoAccounts.forEach((demoAccount) => {
-    const matchedCryptoAcc = cryptoAcc.find(
-      (acc) => acc.id === demoAccount.id.demo
-    );
-
-    if (matchedCryptoAcc) {
-      // Generate the wait time dynamically
-      const interval = generateRandomInterval(matchedCryptoAcc);
-
-      console.log(
-        `Trade for ${matchedCryptoAcc.name} will run after ${
-          interval / 1000
-        } seconds`
-      );
-
-      // Use setTimeout to delay execution of coreFunc
-      setInterval(() => {
-        coreFunc(matchedCryptoAcc);
-      }, interval);
-    }
-  });
 };

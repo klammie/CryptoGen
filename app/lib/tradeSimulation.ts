@@ -15,20 +15,23 @@ export const TradeSimulation = async (cryptoAcc: CryptoAccount[]): Promise<void>
 
     const userAccounts = Array.isArray(response.account) ? response.account : [response.account];
 
-    // ✅ Iterate through user accounts and match them with `cryptoAcc`
+    // ✅ Debugging logs
+    console.log("Available cryptoAcc IDs:", cryptoAcc.map(acc => acc.cryptoId));
+    console.log("Fetched user accounts:", userAccounts);
+    console.log("Full cryptoAcc object:", cryptoAcc);
+
     userAccounts.forEach((account) => {
-      const matchedCryptoAcc = cryptoAcc.find((acc) => acc.id === account.id);
-
+      console.log(`Checking for match with cryptoId: '${account.cryptoId}'`);
+      const matchedCryptoAcc = cryptoAcc.find((acc) => acc.cryptoId?.trim() === account.cryptoId?.trim());
       if (matchedCryptoAcc) {
-        // ✅ First, calculate the interval outside `setInterval`
         const interval = generateRandomInterval(matchedCryptoAcc);
-        
-        console.log(`Trade for ${matchedCryptoAcc.name} will run every ${interval / 1000} seconds`);
-
-        // ✅ Then, use the calculated interval inside `setInterval`
+        console.log(`Trade for ${matchedCryptoAcc.name} will run after ${interval / 1000} seconds`);
+    
         setInterval(() => {
           coreFunc(matchedCryptoAcc);
         }, interval);
+      } else {
+        console.warn(`No matched account for cryptoId: ${account.cryptoId}`);
       }
     });
 
