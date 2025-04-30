@@ -4,10 +4,9 @@ import { getTradeLogs } from "@/app/lib/getTradeLogs"; // ✅ Import your databa
 import { getUserId } from "@/app/lib/getUserId"; // ✅ Ensure correct user ID retrieval
 import { cryptoData } from "../trades/TradeSim";
 
-console.log("cryptoData at startup:", cryptoData); // 🔍 Check initial crypto data
-
 interface TradeLog {
   id: string;
+  crypto: string; // ✅ Add this field
   matchedCrypto?: {
     id?: string;
     image: string;
@@ -33,7 +32,6 @@ const RecentActivity: React.FC = () => {
       try {
         const response = await getTradeLogs(userId);
         if (response.success) {
-          console.log("Fetched trade logs:", response.tradeLogs); // 🔍 Check fetched data
           setTradeLogs(response.tradeLogs ?? []);
         } else {
           setError(
@@ -75,19 +73,24 @@ const RecentActivity: React.FC = () => {
       ? result.toFixed(1)
       : result.toFixed(2);
 
-  const getImagepath = (cryptoRandomizer: string) => {
-    console.log("Crypto Name Received:", cryptoRandomizer);
+  const getImagepath = (cryptoName: string) => {
+    console.log("Crypto Name Received:", cryptoName);
+
+    if (!cryptoName) {
+      console.log("Crypto name is missing, using fallback image.");
+      return "/crypto-images/bitcoin.png";
+    }
+
     const matchedCrypto = cryptoData.find(
-      (crypto) => crypto.name.toLowerCase() === cryptoRandomizer.toLowerCase()
+      (crypto) => crypto.name.toLowerCase() === cryptoName.toLowerCase()
     );
 
     if (matchedCrypto) {
-      const correctedPath = matchedCrypto.image.replace("//", "/"); // 🔍 Remove accidental double slashes
-      console.log("Corrected Image Path:", correctedPath);
-      return correctedPath;
+      return matchedCrypto.image;
     }
 
-    return "/crypto-images/bitcoin.png"; // ✅ Use fallback if no match is found
+    console.log("No match found, using fallback image.");
+    return "/crypto-images/bitcoin.png";
   };
 
   return (
@@ -101,19 +104,14 @@ const RecentActivity: React.FC = () => {
       <hr />
       <div className="overflow-auto h-full">
         {recentTrades.map((trade, index) => {
-          console.log("Trade Crypto Name:", trade.matchedCrypto?.name); // 🔍 Debug name before image rendering
-          console.log(
-            "Generated Image Path:",
-            getImagepath(trade.matchedCrypto?.name ?? "")
-          ); // 🔍 Debug image path final decision
           return (
             <div
               key={index}
               className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 lg:gap-10 px-4 py-4 border-b"
             >
               <Image
-                src={getImagepath(trade.matchedCrypto?.name ?? "")}
-                alt={trade.matchedCrypto?.name ?? "Unknown Crypto"} // ✅ Default value ensures a string
+                src={getImagepath(trade.crypto ?? "")} // ✅ Use trade.crypto
+                alt={trade.crypto ?? "Unknown Crypto"} // ✅ Ensure alt text matches the crypto name
                 className="rounded-lg shadow-md"
                 height={32}
                 width={32}

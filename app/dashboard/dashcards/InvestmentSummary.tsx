@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getInvestmentSummary } from "@/app/lib/getInvestmentSummary";
+import { getTradeLogs } from "@/app/lib/getTradeLogs"; // ✅ Replace with getTradeLogs
 import {
   AreaChart,
   XAxis,
@@ -12,6 +12,12 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { getUserId } from "@/app/lib/getUserId";
+
+interface TradeLog {
+  crypto: string;
+  result: number;
+}
 
 const InvestmentSummary = () => {
   const [data, setData] = useState<
@@ -22,16 +28,53 @@ const InvestmentSummary = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getInvestmentSummary();
+      try {
+        // Fetch trade logs
+        const userId = await getUserId(); // Fetch user ID
+        const response = await getTradeLogs(userId); // ✅ Pass the user ID
 
-      if (!response.success) {
-        setError(response.error ?? null);
+        if (!response.success) {
+          setError(
+            typeof response.error === "string"
+              ? response.error
+              : JSON.stringify(response.error ?? "Unknown error")
+          );
+          setLoading(false);
+          return;
+        }
+
+        // Transform trade logs into wins/losses
+        const transformedData = response.tradeLogs?.reduce(
+          (acc, trade: TradeLog) => {
+            const { crypto, result } = trade;
+            const isLoss = result <= 0;
+
+            // Find existing entry or create a new one
+            let entry = acc.find((item) => item.name === crypto);
+            if (!entry) {
+              entry = { name: crypto, loss: 0, wins: 0 };
+              acc.push(entry);
+            }
+
+            // Categorize win/loss
+            if (isLoss) {
+              entry.loss += Math.abs(result); // Accumulate losses
+            } else {
+              entry.wins += result; // Accumulate wins
+            }
+
+            return acc;
+          },
+          [] as Array<{ name: string; loss: number; wins: number }>
+        );
+
+        setData(transformedData ?? []);
+      } catch (err) {
+        setError("An unexpected error occurred.");
+        console.error("Fetch error:", err);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      setData(response.data);
-      setLoading(false);
     };
 
     fetchData();
@@ -44,13 +87,11 @@ const InvestmentSummary = () => {
       </h2>
 
       {loading ? (
-        <p className="text-center text-gray-500">Loading investment data...</p>
+        <p className="text-center text-gray-500">Loading trade logs...</p>
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
       ) : data.length === 0 ? (
-        <p className="text-center text-gray-500">
-          No investment data available.
-        </p>
+        <p className="text-center text-gray-500">No trade history available.</p>
       ) : (
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={data}>

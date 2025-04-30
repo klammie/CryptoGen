@@ -47,15 +47,15 @@ export interface Trade {
 }
 
 export const cryptoData: Crypto[] = [
-  { name: "Bitcoin", image: "../crypto-images/bitcoin1.png", id: 1 },
-  { name: "Litecoin", image: "../crypto-images/coin.png", id: 2 },
-  { name: "Dogecoin", image: "../crypto-images/dogecoin.png", id: 3 },
-  { name: "Etherum", image: "../crypto-images/etherum.png", id: 4 },
-  { name: "Gold", image: "../crypto-images/gold-bars.png", id: 5 },
-  { name: "Pepecoin", image: "../crypto-images/pepelogo.png", id: 6 },
-  { name: "Solana", image: "../crypto-images/solanac.png", id: 7 },
-  { name: "Xrp", image: "../crypto-images/xrp.png", id: 8 },
-  { name: "Tether", image: "../crypto-images/tether.png", id: 9 },
+  { name: "Bitcoin", image: "/crypto-images/bitcoin1.png", id: 1 }, // ✅ Ensure leading slash
+  { name: "Litecoin", image: "/crypto-images/coin.png", id: 2 },
+  { name: "Dogecoin", image: "/crypto-images/dogecoin.png", id: 3 },
+  { name: "Ethereum", image: "/crypto-images/ethereum.png", id: 4 }, // 🔍 Correct spelling
+  { name: "Gold", image: "/crypto-images/gold-bars.png", id: 5 }, // ✅ Fix path here
+  { name: "Pepecoin", image: "/crypto-images/pepelogo.png", id: 6 },
+  { name: "Solana", image: "/crypto-images/solanac.png", id: 7 }, // ✅ Remove `/public/assets/`
+  { name: "Xrp", image: "/crypto-images/xrp.png", id: 8 },
+  { name: "Tether", image: "/crypto-images/tether.png", id: 9 },
 ];
 
 export const cryptoAcc: CryptoAccount[] = [
@@ -197,8 +197,7 @@ export const updateTradeStatsLc = async (result: number): Promise<void> => {
 };
 
 export const coreFunc = async (account: CryptoAccount): Promise<void> => {
-  console.log("Account passed to coreFunc:", account);
-  console.log("Account specialKey before validation:", account.specialKey);
+  console.log("Trade Initiated:", account);
 
   // Ensure account has required properties
 
