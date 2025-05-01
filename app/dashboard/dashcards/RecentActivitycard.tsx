@@ -74,11 +74,9 @@ const RecentActivity: React.FC = () => {
       : result.toFixed(2);
 
   const getImagepath = (cryptoName: string) => {
-    console.log("Crypto Name Received:", cryptoName);
-
     if (!cryptoName) {
       console.log("Crypto name is missing, using fallback image.");
-      return "/crypto-images/bitcoin.png";
+      return "/crypto-images/bitcoin1.png";
     }
 
     const matchedCrypto = cryptoData.find(
@@ -90,7 +88,7 @@ const RecentActivity: React.FC = () => {
     }
 
     console.log("No match found, using fallback image.");
-    return "/crypto-images/bitcoin.png";
+    return "/crypto-images/bitcoin1.png";
   };
 
   return (
@@ -117,9 +115,7 @@ const RecentActivity: React.FC = () => {
                 width={32}
               />
               <div className="flex flex-col justify-between gap-1">
-                <div className="font-bold text-gray-700">
-                  {trade.matchedCrypto?.name}
-                </div>
+                <div className="font-bold text-gray-700">{trade.crypto}</div>
               </div>
               <div
                 className="flex text-xl font-semibold items-center"

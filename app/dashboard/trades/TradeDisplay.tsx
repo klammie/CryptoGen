@@ -1,13 +1,26 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Trade } from "./TradeSim";
+
 import { AllTrades } from "@/app/components/AllTrades";
 import Image from "next/image";
 import { getTradeLogs } from "@/app/lib/getTradeLogs";
 import { getUserId } from "@/app/lib/getUserId";
+import { cryptoData } from "./TradeSim";
+
+interface TradeLog {
+  id: string;
+  name: string; // ✅ Rename 'crypto' to 'name' based on actual data structure
+  matchedCrypto?: {
+    id?: number;
+    image: string;
+    name: string;
+  };
+  result: number;
+  interval: number; // ✅ Include 'interval' from the response structure
+}
 
 const TradeDisplay: React.FC = () => {
-  const [tradeLogs, setTradeLogs] = useState<Trade[]>([]);
+  const [tradeLogs, setTradeLogs] = useState<TradeLog[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -24,7 +37,7 @@ const TradeDisplay: React.FC = () => {
 
         const response = await getTradeLogs(userId);
         if (response.success && response.tradeLogs) {
-          const formattedTradeLogs: Trade[] = response.tradeLogs.map(
+          const formattedTradeLogs: TradeLog[] = response.tradeLogs.map(
             (trade) => ({
               id: trade.id,
               result: trade.result,
@@ -68,6 +81,21 @@ const TradeDisplay: React.FC = () => {
     return <p>Your Trades will appear here.</p>;
   }
 
+  const getImagepath = (cryptoName: string) => {
+    if (!cryptoName.trim()) {
+      console.log("Crypto name is missing, using fallback image.");
+      return "/crypto-images/bitcoin1.png";
+    }
+
+    const cleanedName = cryptoName.trim().toLowerCase();
+
+    const matchedCrypto = cryptoData.find(
+      (crypto) => crypto.name.toLowerCase() === cleanedName
+    );
+
+    return matchedCrypto ? matchedCrypto.image : "/crypto-images/bitcoin1.png";
+  };
+
   return (
     <div
       id="resultDisplay"
@@ -90,11 +118,15 @@ const TradeDisplay: React.FC = () => {
           >
             <div>
               <Image
-                src={`/assets/cryptoimages/${trade.matchedCrypto?.image}`}
-                alt={trade.matchedCrypto?.name ?? "Unknown Crypto"}
+                src={getImagepath(
+                  trade.matchedCrypto?.name ?? trade.name ?? ""
+                )} // ✅ Use trade.crypto as fallback
+                alt={
+                  trade.matchedCrypto?.name ?? trade.name ?? "Unknown Crypto"
+                } // ✅ Ensure alt text matches
+                className="rounded-lg shadow-md"
                 height={32}
                 width={32}
-                className="rounded-lg shadow-md"
               />
             </div>
             <div className="flex flex-col justify-between gap-1">

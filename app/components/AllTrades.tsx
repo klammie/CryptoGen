@@ -10,9 +10,13 @@ import {
 import Image from "next/image";
 import { getTradeLogs } from "@/app/lib/getTradeLogs"; // ✅ Import your API function
 import { getUserId } from "../lib/getUserId";
+import { cryptoData } from "../dashboard/trades/TradeSim";
 
 interface TradeLog {
+  id: string;
+  crypto: string; // ✅ Add this field to match your actual data structure
   matchedCrypto?: {
+    id?: string;
     image: string;
     name: string;
   };
@@ -57,6 +61,20 @@ export function AllTrades() {
     fetchTradeLogs();
   }, []);
 
+  const getImagepath = (cryptoName: string) => {
+    if (!cryptoName.trim()) {
+      console.log("Crypto name is missing, using fallback image.");
+      return "/crypto-images/bitcoin1.png";
+    }
+
+    const cleanedName = cryptoName.trim().toLowerCase();
+
+    const matchedCrypto = cryptoData.find(
+      (crypto) => crypto.name.toLowerCase() === cleanedName
+    );
+
+    return matchedCrypto ? matchedCrypto.image : "/crypto-images/bitcoin1.png";
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -87,16 +105,20 @@ export function AllTrades() {
                 className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 lg:gap-10 px-4 py-4 border-b"
               >
                 <Image
-                  src={`/assets/cryptoimages/${trade.matchedCrypto?.image}`}
-                  alt={trade.matchedCrypto?.name ?? "Unknown"}
-                  width={32}
-                  height={32}
+                  src={getImagepath(
+                    trade.matchedCrypto?.name ?? trade.crypto ?? ""
+                  )} // ✅ Use trade.crypto as fallback
+                  alt={
+                    trade.matchedCrypto?.name ??
+                    trade.crypto ??
+                    "Unknown Crypto"
+                  } // ✅ Ensure alt text matches
                   className="rounded-lg shadow-md"
+                  height={32}
+                  width={32}
                 />
                 <div className="flex flex-col justify-between gap-1">
-                  <div className="font-bold text-gray-700">
-                    {trade.matchedCrypto?.name}
-                  </div>
+                  <div className="font-bold text-gray-700">{trade.crypto}</div>
                 </div>
                 <div
                   className="flex text-xl font-semibold items-center"
