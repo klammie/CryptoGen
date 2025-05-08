@@ -221,7 +221,7 @@ export const coreFunc = async (account: CryptoAccount): Promise<void> => {
   }; // ✅ Ensures it's always defined
   const result = generateCustomRandomNumber(account);
   const interval = generateRandomInterval(account);
-
+  console.log("int:", interval);
   // Update losses or profits based on the trade result
 
   // ✅ Store trade log in the database instead of localStorage

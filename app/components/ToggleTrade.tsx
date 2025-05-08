@@ -36,7 +36,7 @@ const DemoToggleButton: React.FC<{ account: Account }> = ({ account }) => {
     toast.success(
       response.updatedAccount.isActive
         ? "Trade Initiated"
-        : "Account is now inactive"
+        : "Account is now Inactive"
     );
   };
 

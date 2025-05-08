@@ -3,7 +3,7 @@ import prisma from "./db";
 import { getUserId } from "./getUserId";
 import { TradeSimulation } from "./tradeSimulation";
 import { getCryptoAccount } from "@/app/lib/getCryptoAccount";
-import { CryptoAccount } from "@/app/dashboard/trades/TradeSim";
+import { cryptoAcc, CryptoAccount } from "@/app/dashboard/trades/TradeSim";
 
 export async function toggleDemoAccount() {
   try {
@@ -44,23 +44,21 @@ export async function toggleDemoAccount() {
           : [response.account];
 
         // ✅ Map fetched accounts to `CryptoAccount` type
-        const formattedAccounts: CryptoAccount[] = userAccounts.map((acc) => ({
-          id: acc.id,
-          type: acc.type,
-          image: acc.image,
-          amount: acc.amount,
-          isActive: acc.isActive,
-          name: acc.name || "Unknown", // Provide default values if missing
-          specialKey:
-            typeof acc.specialKey === "object"
-              ? acc.specialKey
-              : { min: 0, max: 100 }, // ✅ Ensures valid specialKey format
-          waitTime:
-            typeof acc.waitTime === "object"
-              ? acc.waitTime
-              : { min: 5000, max: 10000 }, // ✅ Ensures valid waitTime format
-              cryptoId: acc.cryptoId,
-        }));
+        const formattedAccounts: CryptoAccount[] = userAccounts.map((acc) => {
+          const matchedCryptoAcc = cryptoAcc.find((crypto) => crypto.cryptoId === acc.cryptoId);
+        
+          return {
+            id: acc.id,
+            type: acc.type,
+            image: acc.image,
+            amount: acc.amount,
+            isActive: acc.isActive,
+            name: acc.name || "Unknown",
+            specialKey: matchedCryptoAcc?.specialKey || { min: 6, max: 100 }, // ✅ Use matched data
+            waitTime: { min: 3600, max: 7200 },
+            cryptoId: acc.cryptoId,
+          };
+        });
 
         TradeSimulation(formattedAccounts); // Pass formatted accounts
       }

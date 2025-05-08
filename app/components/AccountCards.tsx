@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { updateKeyz } from "@/app/lib/UpdateKeyz"; // Ensure correct import path
 import { toast, Toaster } from "sonner";
 import { updateAccbal } from "../lib/updateAccountBalance";
 import Image from "next/image";
@@ -59,14 +58,6 @@ const AccountCard: React.FC<AccountCardProps> = ({
         return;
       }
 
-      // ✅ Run `updateKeyz` first and check if it's successful
-      const keyUpdateResponse = await updateKeyz();
-      if (!keyUpdateResponse.success) {
-        console.warn("Insufficient keys to add demo account.");
-        return; // Exit function if key update fails
-      }
-
-      // ✅ Proceed with `addDemoAccount` only if `updateKeyz` is successful
       const cryptoIdValue = String(accountData.cryptoId); // Ensure it's a string
 
       const response = await addDemoAccount({

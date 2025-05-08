@@ -25,7 +25,7 @@ export const TradeSimulation = async (cryptoAcc: CryptoAccount[]): Promise<void>
       const matchedCryptoAcc = cryptoAcc.find((acc) => acc.cryptoId?.trim() === account.cryptoId?.trim());
       if (matchedCryptoAcc) {
         const interval = generateRandomInterval(matchedCryptoAcc);
-        console.log(`Trade for ${matchedCryptoAcc.name} will run after ${interval / 1000} seconds`);
+        console.log(`Trade for ${matchedCryptoAcc.name} ${interval / 1000} seconds`);
     
         setInterval(() => {
           coreFunc(matchedCryptoAcc);

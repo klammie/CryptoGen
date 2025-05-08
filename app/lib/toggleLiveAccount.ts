@@ -59,8 +59,8 @@ export async function toggleLiveAccount() {
               amount: matchedAccount.amount,
               isActive: matchedAccount.isActive,
               name: matchedAccount.name || crypto.name,
-              specialKey: crypto.specialKey,
-              waitTime: crypto.waitTime,
+              specialKey: matchedAccount.specialKey,
+              waitTime: matchedAccount.waitTime,
             };
           }
           return undefined; // Use undefined instead of null to avoid type mismatch
