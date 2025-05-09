@@ -46,7 +46,7 @@ export async function toggleDemoAccount() {
         // ✅ Map fetched accounts to `CryptoAccount` type
         const formattedAccounts: CryptoAccount[] = userAccounts.map((acc) => {
           const matchedCryptoAcc = cryptoAcc.find((crypto) => crypto.cryptoId === acc.cryptoId);
-        
+          console.log("Matched Account:", matchedCryptoAcc);
           return {
             id: acc.id,
             type: acc.type,
@@ -55,11 +55,11 @@ export async function toggleDemoAccount() {
             isActive: acc.isActive,
             name: acc.name || "Unknown",
             specialKey: matchedCryptoAcc?.specialKey || { min: 6, max: 100 }, // ✅ Use matched data
-            waitTime: { min: 3600, max: 7200 },
+            waitTime: matchedCryptoAcc?.waitTime || {min:3600 , max: 7200},
             cryptoId: acc.cryptoId,
           };
         });
-
+        console.log("🔍 Formatted accounts being passed:", formattedAccounts);
         TradeSimulation(formattedAccounts); // Pass formatted accounts
       }
     }

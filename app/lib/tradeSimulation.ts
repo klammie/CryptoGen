@@ -4,6 +4,7 @@ import { coreFunc, CryptoAccount } from "@/app/dashboard/trades/TradeSim";
 import { generateRandomInterval } from "@/app/dashboard/trades/TradeSim";
 
 export const TradeSimulation = async (cryptoAcc: CryptoAccount[]): Promise<void> => {
+  console.log("🚀 TradeSimulation has started in production!");
   try {
     // ✅ Fetch accounts from database instead of localStorage
     const response = await getCryptoAccount();

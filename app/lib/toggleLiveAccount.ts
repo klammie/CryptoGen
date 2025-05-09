@@ -49,7 +49,7 @@ export async function toggleLiveAccount() {
         const formattedAccounts = cryptoAcc
         .map((crypto): CryptoAccount | undefined => {
           const matchedAccount = userAccounts.find((account) => account.cryptoId?.trim() === crypto.cryptoId?.trim());
-          
+          console.log("Matched Account:", matchedAccount);
           if (matchedAccount) {
             return {
               id: matchedAccount.id,
@@ -59,8 +59,8 @@ export async function toggleLiveAccount() {
               amount: matchedAccount.amount,
               isActive: matchedAccount.isActive,
               name: matchedAccount.name || crypto.name,
-              specialKey: matchedAccount.specialKey,
-              waitTime: matchedAccount.waitTime,
+              specialKey: matchedAccount?.specialKey || {min:6, max:100},
+              waitTime: matchedAccount?.waitTime || {min:3600, max:7200},
             };
           }
           return undefined; // Use undefined instead of null to avoid type mismatch
