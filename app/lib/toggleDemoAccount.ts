@@ -9,7 +9,7 @@ export async function toggleDemoAccount(cryptoId: string) {
       return { success: false, error: "User authentication failed" };
     }
 
-    // ✅ Find the specific demo account by userId and cryptoId
+    // ✅ Find the specific live account by userId and cryptoId
     const account = await prisma.demoAccount.findFirst({
       where: {
         id: userId,
@@ -22,8 +22,8 @@ export async function toggleDemoAccount(cryptoId: string) {
       return { success: false, error: "Demo account not found" };
     }
 
-    // ✅ Toggle isActive
-    const updatedAccount = await prisma.demoAccount.updateMany({
+    // ✅ Toggle isActive without storing the result
+    await prisma.demoAccount.updateMany({
       where: {
         id: userId,
         cryptoId: cryptoId,
