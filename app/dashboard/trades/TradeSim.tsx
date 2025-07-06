@@ -47,15 +47,15 @@ export interface Trade {
 }
 
 export const cryptoData: Crypto[] = [
-  { name: "Bitcoin", image: "/crypto-images/bitcoin1.png", id: 1 }, // ✅ Ensure leading slash
-  { name: "Litecoin", image: "/crypto-images/coin.png", id: 2 },
-  { name: "Dogecoin", image: "/crypto-images/dogecoin.png", id: 3 },
-  { name: "Ethereum", image: "/crypto-images/ethereum.png", id: 4 }, // 🔍 Correct spelling
-  { name: "Gold", image: "/crypto-images/gold-bars.png", id: 5 }, // ✅ Fix path here
-  { name: "Pepecoin", image: "/crypto-images/pepelogo.png", id: 6 },
-  { name: "Solana", image: "/crypto-images/solanac.png", id: 7 }, // ✅ Remove `/public/assets/`
-  { name: "Xrp", image: "/crypto-images/xrp.png", id: 8 },
-  { name: "Tether", image: "/crypto-images/tether.png", id: 9 },
+  { name: "Bitcoin", image: "/assets/crypto-images/bitcoin1.png", id: 1 }, // ✅ Ensure leading slash
+  { name: "Litecoin", image: "/assets/crypto-images/coin.png", id: 2 },
+  { name: "Dogecoin", image: "/assets/crypto-images/dogecoin.png", id: 3 },
+  { name: "Ethereum", image: "/assets/crypto-images/ethereum.png", id: 4 }, // 🔍 Correct spelling
+  { name: "Gold", image: "/assets/crypto-images/gold-bars.png", id: 5 }, // ✅ Fix path here
+  { name: "Pepecoin", image: "/assets/crypto-images/pepelogo.png", id: 6 },
+  { name: "Solana", image: "/assets/crypto-images/solanac.png", id: 7 }, // ✅ Remove `/public/assets/`
+  { name: "Xrp", image: "/assets/crypto-images/xrp.png", id: 8 },
+  { name: "Tether", image: "/assets/crypto-images/tether.png", id: 9 },
 ];
 
 export const cryptoAcc: CryptoAccount[] = [
@@ -222,7 +222,7 @@ export const coreFunc = async (account: CryptoAccount): Promise<void> => {
   const result = generateCustomRandomNumber(account);
   const interval = generateRandomInterval(account);
   console.log("int:", interval);
-  // Update losses or profits based on the trade result
+  // Update losses or profits based on the trade resultFsetInterval
 
   // ✅ Store trade log in the database instead of localStorage
   await addTradeLog({ matchedCrypto, result, interval });

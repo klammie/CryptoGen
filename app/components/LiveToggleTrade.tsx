@@ -21,7 +21,12 @@ const LiveToggleButton: React.FC<{ account: Account }> = ({ account }) => {
     // ✅ Optimistically update the UI before waiting for the API response
     setIsPlaying((prev) => !prev);
 
-    const response = await toggleLiveAccount();
+    if (!account.cryptoId) {
+      toast.error("Missing cryptoId for this account.");
+      return;
+    }
+
+    const response = await toggleLiveAccount(account.cryptoId);
 
     if (!response.success || !response.updatedAccount) {
       toast.error("Failed to toggle account status.");

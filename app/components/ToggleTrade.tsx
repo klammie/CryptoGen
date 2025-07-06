@@ -21,7 +21,12 @@ const DemoToggleButton: React.FC<{ account: Account }> = ({ account }) => {
     // ✅ Optimistically update the UI before waiting for the API response
     setIsPlaying((prev) => !prev);
 
-    const response = await toggleDemoAccount();
+    if (!account.cryptoId) {
+      toast.error("Missing cryptoId for this account.");
+      return;
+    }
+
+    const response = await toggleDemoAccount(account.cryptoId);
 
     if (!response.success || !response.updatedAccount) {
       toast.error("Failed to toggle account status.");
@@ -36,7 +41,7 @@ const DemoToggleButton: React.FC<{ account: Account }> = ({ account }) => {
     toast.success(
       response.updatedAccount.isActive
         ? "Trade Initiated"
-        : "Account is now Inactive"
+        : "Account is now inactive"
     );
   };
 
