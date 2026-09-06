@@ -1,6 +1,7 @@
 // components/ClientSignOutButton.jsx
 
 import { signOut } from "../lib/auth";
+import { LogOut } from "lucide-react";
 
 export default function ClientSignOutButton() {
   return (
@@ -8,10 +9,16 @@ export default function ClientSignOutButton() {
       className="w-full"
       action={async () => {
         "use server";
-        await signOut();
+        await signOut({ redirectTo: "/" });
       }}
     >
-      <button className="w-full text-left">Log out</button>
+      <button
+        type="submit"
+        className="flex w-full items-center text-left text-red-600 focus:text-red-600"
+      >
+        <LogOut className="mr-2 h-4 w-4" />
+        Log out
+      </button>
     </form>
   );
 }

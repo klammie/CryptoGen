@@ -41,16 +41,17 @@ const RecentActivity: React.FC = () => {
   }, []);
 
   // Show most recent 5 trades first
-  const recentTrades = tradeLogs.slice(-5).reverse(); 
+  const recentTrades = tradeLogs.slice(-5).reverse();
 
   const formatTradeResult = (result: number): string => {
-    const prefix = result >= 0 ? "+" : "";
-    const formatted = Math.abs(result) >= 1000 
-      ? Math.round(result).toLocaleString() 
-      : Math.abs(result) >= 100 
-      ? result.toFixed(1) 
-      : result.toFixed(2);
-    return `${prefix}${formatted}`;
+    const prefix = result >= 0 ? "+" : "-";
+    const formatted =
+      Math.abs(result) >= 1000
+        ? Math.round(Math.abs(result)).toLocaleString()
+        : Math.abs(result) >= 100
+        ? Math.abs(result).toFixed(1)
+        : Math.abs(result).toFixed(2);
+    return `${prefix}$${formatted}`;
   };
 
   const getImagepath = (cryptoName: string) => {
@@ -62,37 +63,40 @@ const RecentActivity: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
-        <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      {/* Header */}
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-base font-semibold tracking-tight text-slate-900">
+          Recent Activity
+        </h2>
+        <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">
           Last 5
         </span>
       </div>
-      <hr className="border-gray-100 mb-4" />
 
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+      <div className="flex-1 space-y-1 overflow-y-auto pr-1">
         {loading ? (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="animate-pulse flex items-center gap-3 p-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+              <div key={i} className="flex animate-pulse items-center gap-3 p-3">
+                <div className="h-10 w-10 rounded-xl bg-slate-100" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                  <div className="h-4 w-24 rounded bg-slate-100" />
+                  <div className="h-3 w-16 rounded bg-slate-100" />
                 </div>
-                <div className="h-6 w-16 bg-gray-200 rounded"></div>
+                <div className="h-6 w-16 rounded-lg bg-slate-100" />
               </div>
             ))}
           </div>
         ) : error ? (
-          <div className="flex-1 flex items-center justify-center text-center py-10">
-            <p className="text-red-500 text-sm">{error}</p>
+          <div className="flex flex-1 items-center justify-center py-10 text-center">
+            <p className="text-sm text-rose-600">{error}</p>
           </div>
         ) : recentTrades.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center text-center py-10">
+          <div className="flex flex-1 items-center justify-center py-10 text-center">
             <div>
-              <p className="text-gray-500 mb-1">No recent activities</p>
-              <p className="text-sm text-gray-400">Your trades will appear here.</p>
+              <p className="text-sm font-semibold text-slate-900">No recent activities</p>
+              <p className="mt-1 text-[13px] text-slate-500">Your trades will appear here.</p>
             </div>
           </div>
         ) : (
@@ -101,30 +105,35 @@ const RecentActivity: React.FC = () => {
             return (
               <div
                 key={trade.id || index}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors group"
+                className="flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors hover:bg-slate-50"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden ring-2 ring-white shadow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50">
                     <Image
                       src={getImagepath(trade.crypto ?? "")}
                       alt={trade.crypto ?? "Crypto"}
-                      width={24}
-                      height={24}
+                      width={22}
+                      height={22}
                       className="object-contain"
                     />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{trade.crypto || "Unknown"}</p>
-                    <p className="text-xs text-gray-500">Trade executed</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      {trade.crypto || "Unknown"}
+                    </p>
+                    <p className="text-xs text-slate-500">Trade executed</p>
                   </div>
                 </div>
-                <div className={`text-sm font-semibold px-2.5 py-1 rounded-lg ${
-                  isProfit 
-                    ? "text-green-700 bg-green-50" 
-                    : "text-red-700 bg-red-50"
-                }`}>
+
+                <span
+                  className={`rounded-lg px-2.5 py-1 text-[13px] font-semibold tabular-nums ring-1 ${
+                    isProfit
+                      ? "bg-emerald-50 text-emerald-700 ring-emerald-600/15"
+                      : "bg-rose-50 text-rose-700 ring-rose-600/15"
+                  }`}
+                >
                   {formatTradeResult(trade.result)}
-                </div>
+                </span>
               </div>
             );
           })

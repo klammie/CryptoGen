@@ -10,8 +10,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { KeySquare, Menu, LogOut, Settings } from "lucide-react";
+import { KeySquare, Menu, Settings } from "lucide-react";
 import { ThemeToggle } from "../components/ThemeToggle";
+import ClientSignOutButton from "../components/ClientSignOut";
 import prisma from "../lib/db";
 import { redirect } from "next/navigation";
 import { requireUser } from "../lib/hooks";
@@ -170,10 +171,7 @@ export default async function DashboardLayout({
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/home" className="flex items-center cursor-pointer text-red-600 focus:text-red-600">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </Link>
+                  <ClientSignOutButton />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

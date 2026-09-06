@@ -1,6 +1,8 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { getCryptoAccount } from "@/app/lib/getCryptoAccount";
+import { Wallet } from "lucide-react";
 import Image from "next/image";
 
 interface Account {
@@ -37,62 +39,129 @@ const DashboardAccountCard: React.FC = () => {
     fetchAccountData();
   }, []);
 
+  const isLive = accountData?.mode?.toLowerCase() === "live";
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Account Overview</h2>
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      {/* Header */}
+      <div className="mb-5 flex items-center justify-between">
+        <h2 className="text-base font-semibold tracking-tight text-slate-900">
+          Account Overview
+        </h2>
         {accountData && (
-          <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-            accountData.mode === "Live" 
-              ? "bg-green-50 text-green-700 ring-1 ring-green-600/20" 
-              : "bg-gray-50 text-gray-700 ring-1 ring-gray-600/20"
-          }`}>
+          <span
+            className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ${
+              isLive
+                ? "bg-emerald-50 text-emerald-700 ring-emerald-600/20"
+                : "bg-slate-100 text-slate-600 ring-slate-500/20"
+            }`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isLive ? "animate-pulse bg-emerald-500" : "bg-slate-400"
+              }`}
+            />
             {accountData.mode} Mode
           </span>
         )}
       </div>
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="animate-pulse flex flex-col items-center gap-4 w-full">
-            <div className="h-48 w-full bg-gray-200 rounded-xl"></div>
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="h-40 animate-pulse rounded-2xl bg-slate-100" />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="h-16 animate-pulse rounded-xl bg-slate-100" />
+            <div className="h-16 animate-pulse rounded-xl bg-slate-100" />
           </div>
         </div>
       ) : accountData ? (
-        <div className="flex-1 flex flex-col justify-between">
-          <div className="relative w-full h-48 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl overflow-hidden shadow-lg">
-            {/* Decorative background elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-            
-            <div className="relative z-10 p-5 h-full flex flex-col justify-between text-white">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium opacity-90">{accountData.type}</span>
-                <div className="w-8 h-8 rounded-full bg-white/20 p-1 flex items-center justify-center">
-                  <Image 
-                    src={`/images/${accountData.image}.png`} 
-                    alt={accountData.type} 
-                    width={24} 
-                    height={24} 
+        <div className="flex flex-1 flex-col gap-4">
+          {/* ── Balance card ── */}
+          <div className="relative overflow-hidden rounded-2xl bg-slate-900 p-5 text-white">
+            {/* Soft brand glows */}
+            <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-indigo-500/25 blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-purple-500/15 blur-2xl" />
+
+            <div className="relative z-10">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
+                    Total Balance
+                  </p>
+                  <p className="mt-2 text-3xl font-bold tracking-tight tabular-nums">
+                    $
+                    {accountData.amount.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                </div>
+
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/10 backdrop-blur">
+                  <Image
+                    src={`/images/${accountData.image}.png`}
+                    alt={accountData.type}
+                    width={22}
+                    height={22}
                     className="object-contain"
                   />
                 </div>
               </div>
-              <div>
-                <p className="text-sm opacity-80 mb-1">Total Balance</p>
-                <p className="text-3xl font-bold tracking-tight">
-                  ${accountData.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
+
+              <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                <div className="flex items-center gap-2">
+                  <Wallet className="h-3.5 w-3.5 text-indigo-300" />
+                  <span className="text-[12px] font-medium text-slate-300">
+                    {accountData.type} Account
+                  </span>
+                </div>
+                <span className="text-[11px] font-medium tabular-nums text-slate-400">
+                  •••• {accountData.id.slice(-4)}
+                </span>
               </div>
+            </div>
+          </div>
+
+          {/* ── Meta grid ── */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3">
+              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400">
+                Type
+              </p>
+              <p className="mt-1 text-sm font-semibold text-slate-900">
+                {accountData.type}
+              </p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3">
+              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400">
+                Mode
+              </p>
+              <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-slate-900">
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    isLive ? "bg-emerald-500" : "bg-slate-400"
+                  }`}
+                />
+                {accountData.mode}
+              </p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-center py-10">
-          <div>
-            <p className="text-gray-500 mb-2">No account found.</p>
-            <p className="text-sm text-gray-400">Please add an account from the shop to get started.</p>
+        <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-10 text-center">
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50">
+            <Wallet className="h-5 w-5 text-indigo-600" />
           </div>
+          <p className="text-sm font-semibold text-slate-900">No account found</p>
+          <p className="mt-1 max-w-[220px] text-[13px] text-slate-500">
+            Add an account from the shop to start trading.
+          </p>
+          <a
+            href="/dashboard/shop"
+            className="mt-4 text-[13px] font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+          >
+            Visit the shop →
+          </a>
         </div>
       )}
     </div>

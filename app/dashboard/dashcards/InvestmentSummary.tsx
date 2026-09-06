@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { getTradeLogs } from "@/app/lib/getTradeLogs";
 import {
@@ -26,11 +27,14 @@ interface ChartTooltipProps {
 const CustomTooltip = ({ active, payload, label }: ChartTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-100">
-        <p className="text-sm font-semibold text-gray-900 mb-1">{label}</p>
+      <div className="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 shadow-lg shadow-slate-900/5">
+        <p className="mb-1 text-xs font-semibold text-slate-900">{label}</p>
         {payload.map((entry, index) => (
-          <p key={index} className="text-xs" style={{ color: entry.color }}>
-            {entry.name}: <span className="font-medium">${Number(entry.value ?? 0).toLocaleString()}</span>
+          <p key={index} className="text-[11px] font-medium" style={{ color: entry.color }}>
+            {entry.name}:{" "}
+            <span className="font-semibold tabular-nums">
+              ${Number(entry.value ?? 0).toLocaleString()}
+            </span>
           </p>
         ))}
       </div>
@@ -82,35 +86,40 @@ const InvestmentSummary = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Investment Summary</h2>
-        <div className="flex items-center gap-4 text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#7678ED]"></span>
-            <span className="text-gray-600 font-medium">Wins</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff7f51]"></span>
-            <span className="text-gray-600 font-medium">Losses</span>
-          </div>
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      {/* Header */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-base font-semibold tracking-tight text-slate-900">
+          Investment Summary
+        </h2>
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Wins
+          </span>
+          <span className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+            <span className="h-2 w-2 rounded-full bg-rose-500" />
+            Losses
+          </span>
         </div>
       </div>
 
-      <div className="flex-1 min-h-[250px]">
+      <div className="min-h-[250px] flex-1">
         {loading ? (
-          <div className="h-full flex items-center justify-center">
-            <div className="animate-pulse w-full h-48 bg-gray-100 rounded-xl"></div>
+          <div className="flex h-full items-center justify-center">
+            <div className="h-48 w-full animate-pulse rounded-xl bg-slate-100" />
           </div>
         ) : error ? (
-          <div className="h-full flex items-center justify-center text-center py-10">
-            <p className="text-red-500 text-sm">{error}</p>
+          <div className="flex h-full items-center justify-center py-10 text-center">
+            <p className="text-sm text-rose-600">{error}</p>
           </div>
         ) : data.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-center py-10">
+          <div className="flex h-full items-center justify-center py-10 text-center">
             <div>
-              <p className="text-gray-500 mb-1">No data available</p>
-              <p className="text-sm text-gray-400">Start trading to see your summary.</p>
+              <p className="text-sm font-semibold text-slate-900">No data available</p>
+              <p className="mt-1 text-[13px] text-slate-500">
+                Start trading to see your summary.
+              </p>
             </div>
           </div>
         ) : (
@@ -118,44 +127,47 @@ const InvestmentSummary = () => {
             <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorWins" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#7678ED" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#7678ED" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorLoss" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ff7f51" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#ff7f51" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-              <XAxis 
-                dataKey="name" 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fill: '#6b7280', fontSize: 12 }} 
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 500 }}
                 dy={10}
               />
-              <YAxis 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fill: '#6b7280', fontSize: 12 }} 
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#94a3b8", fontSize: 11 }}
                 dx={-10}
+                width={44}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#e5e7eb', strokeWidth: 1 }} />
-              <Area 
-                type="monotone" 
-                dataKey="wins" 
-                stroke="#7678ED" 
+              <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#e2e8f0", strokeWidth: 1 }} />
+              <Area
+                type="monotone"
+                dataKey="wins"
+                name="Wins"
+                stroke="#10b981"
                 strokeWidth={2}
-                fillOpacity={1} 
-                fill="url(#colorWins)" 
+                fillOpacity={1}
+                fill="url(#colorWins)"
               />
-              <Area 
-                type="monotone" 
-                dataKey="loss" 
-                stroke="#ff7f51" 
+              <Area
+                type="monotone"
+                dataKey="loss"
+                name="Losses"
+                stroke="#f43f5e"
                 strokeWidth={2}
-                fillOpacity={1} 
-                fill="url(#colorLoss)" 
+                fillOpacity={1}
+                fill="url(#colorLoss)"
               />
             </AreaChart>
           </ResponsiveContainer>
