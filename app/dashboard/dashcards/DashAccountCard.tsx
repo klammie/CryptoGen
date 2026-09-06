@@ -1,7 +1,7 @@
-"use client"; // Required for client-side execution
+"use client";
 import React, { useEffect, useState } from "react";
-import { getCryptoAccount } from "@/app/lib/getCryptoAccount"; // Import function
-import Image from "next/image"; // ✅ Restored optimized Next.js Image component
+import { getCryptoAccount } from "@/app/lib/getCryptoAccount";
+import Image from "next/image";
 
 interface Account {
   id: string;
@@ -19,15 +19,13 @@ const DashboardAccountCard: React.FC = () => {
     const fetchAccountData = async () => {
       try {
         const response = await getCryptoAccount();
-
         if (response.success && response.account) {
           setAccountData({
             ...response.account,
-            mode: response.account.mode ?? "Unknown", // ✅ Ensure a valid mode is set
+            mode: response.account.mode ?? "Unknown",
           });
         } else {
           setAccountData(null);
-          console.error("Error fetching account data:", response.error);
         }
       } catch (error) {
         console.error("Database fetch error:", error);
@@ -36,52 +34,66 @@ const DashboardAccountCard: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchAccountData();
   }, []);
 
   return (
-    <div className="my-8 mx-auto xl:ml-20 justify-center">
-      <h2 className="text-xl flex justify-center font-semibold mb-4">
-        Accounts
-      </h2>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold text-gray-900">Account Overview</h2>
+        {accountData && (
+          <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+            accountData.mode === "Live" 
+              ? "bg-green-50 text-green-700 ring-1 ring-green-600/20" 
+              : "bg-gray-50 text-gray-700 ring-1 ring-gray-600/20"
+          }`}>
+            {accountData.mode} Mode
+          </span>
+        )}
+      </div>
 
       {loading ? (
-        <p>Loading account data...</p>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-pulse flex flex-col items-center gap-4 w-full">
+            <div className="h-48 w-full bg-gray-200 rounded-xl"></div>
+          </div>
+        </div>
       ) : accountData ? (
-        <div className="flex flex-row gap-5">
-          {/* ✅ Restored flex layout */}
-          <div className="relative shadow-lg rounded-xl overflow-hidden bg-white">
-            <div
-              className={`absolute top-1 left-1/2 transform -translate-x-1/2  py-1 bg-opacity-80 rounded-full px-4 text-sm font-semibold shadow-md ${
-                accountData.mode === "Live"
-                  ? "bg-blue-600 text-white"
-                  : accountData.mode === "Demo"
-                  ? "bg-gray-600 text-white"
-                  : "bg-red-600 text-white" // ✅ Fallback for undefined mode
-              }`}
-            >
-              {accountData.mode}
+        <div className="flex-1 flex flex-col justify-between">
+          <div className="relative w-full h-48 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl overflow-hidden shadow-lg">
+            {/* Decorative background elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div className="relative z-10 p-5 h-full flex flex-col justify-between text-white">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium opacity-90">{accountData.type}</span>
+                <div className="w-8 h-8 rounded-full bg-white/20 p-1 flex items-center justify-center">
+                  <Image 
+                    src={`/images/${accountData.image}.png`} 
+                    alt={accountData.type} 
+                    width={24} 
+                    height={24} 
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+              <div>
+                <p className="text-sm opacity-80 mb-1">Total Balance</p>
+                <p className="text-3xl font-bold tracking-tight">
+                  ${accountData.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+              </div>
             </div>
-            <Image
-              src={`/images/${accountData.image}.png`}
-              alt={accountData.type} // ✅ Replace `type` with `mode`
-              width={400}
-              height={300}
-              className="rounded"
-            />
-            <p className="absolute top-10 left-24 transform -translate-x-1/2 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white drop-shadow-md bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
-              ${accountData.amount.toFixed(2)}
-            </p>
-            <p className="absolute top-20 left-4 font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-yellow-300 to-gray-100">
-              {accountData.type}
-            </p>
           </div>
         </div>
       ) : (
-        <p className="text-gray-600">
-          No account found. Please add an account from the shop.
-        </p>
+        <div className="flex-1 flex items-center justify-center text-center py-10">
+          <div>
+            <p className="text-gray-500 mb-2">No account found.</p>
+            <p className="text-sm text-gray-400">Please add an account from the shop to get started.</p>
+          </div>
+        </div>
       )}
     </div>
   );

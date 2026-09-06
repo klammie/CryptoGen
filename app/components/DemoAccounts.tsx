@@ -1,7 +1,5 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-
 import ToggleTrade from "./ToggleTrade";
 import TradeDisplay from "../dashboard/trades/TradeDisplay";
 import { Toaster } from "sonner";
@@ -9,6 +7,7 @@ import { ConfirmDelete } from "./ConfirmDelete";
 import Image from "next/image";
 import { Account } from "@/app/dashboard/trades/TradeSim";
 import { getDemoAccount } from "../lib/getDemoAccount";
+import { Loader2 } from "lucide-react";
 
 const DemoAccount: React.FC = () => {
   const [accountData, setAccountData] = useState<Account[]>([]);
@@ -18,15 +17,12 @@ const DemoAccount: React.FC = () => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const response = await getDemoAccount(); // ✅ Fetch from DB
-        console.log("Fetched accounts:", response); // 🔍 Debugging log
-
+        const response = await getDemoAccount();
         if (response.success && Array.isArray(response.demoAccount)) {
-          console.log("State updated:", response.demoAccount);
           setAccountData(
             response.demoAccount.map((account) => ({
               ...account,
-              cryptoId: account.cryptoId ?? undefined, // ✅ Converts null to undefined
+              cryptoId: account.cryptoId ?? undefined,
             }))
           );
         }
@@ -37,81 +33,95 @@ const DemoAccount: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchAccounts();
   }, []);
 
-  // ✅ Separate useEffect to monitor state updates
-  useEffect(() => {
-    console.log("State actually updated:", accountData); // 🔥 Logs after state changes
-  }, [accountData]); // ✅ Runs every time `accountData` changes
-
   const safeAccountData = accountData.map((account) => ({
     ...account,
-    features: account.features ?? [], // ✅ Ensures features is always an array
+    features: account.features ?? [],
   }));
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mb-4" />
+        <p className="text-gray-500 font-medium">Loading demo accounts...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-center">
+        <p className="text-red-600 font-medium">{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto">
-      {loading ? (
-        <p className="text-center text-lg font-semibold text-gray-600 mt-10">
-          Loading accounts...
-        </p>
-      ) : error ? (
-        <p className="text-center text-lg font-semibold text-red-600 mt-10">
-          {error}
-        </p>
-      ) : accountData.length === 0 ? (
-        <p className="text-center text-lg font-semibold text-gray-600 mt-10">
-          No demo accounts found. Add an account to get started!
-        </p>
+    <div className="space-y-8">
+      {accountData.length === 0 ? (
+        <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center shadow-sm">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">No Demo Accounts</h3>
+          <p className="text-gray-500">Add a demo account to practice trading risk-free.</p>
+        </div>
       ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-8">
-            {accountData.map((account) => (
-              <div
-                key={account.id}
-                className="relative card border rounded-lg p-6 m-4 shadow-md"
-              >
-                {/* Label positioned top-center */}
-                <div className="absolute top-5 left-1/2 bg-opacity-80 transform -translate-x-1/2 bg-gray-600 text-white rounded-full px-4 py-1 text-sm font-semibold shadow-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {accountData.map((account) => (
+            <div
+              key={account.id}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col h-full hover:shadow-md transition-shadow duration-200"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700 ring-1 ring-gray-200">
                   Demo
-                </div>
-
-                <Image
-                  src={`/images/${account.image}.png`}
-                  alt={account.type}
-                  width={800} // Adjust based on your needs
-                  height={600} // Adjust based on your needs
-                  className="rounded"
-                />
-
-                <div className="flex justify-between items-center mt-2">
-                  <ToggleTrade account={account} />
-                  <ConfirmDelete
-                    accountData={safeAccountData}
-                    setAccountData={setAccountData}
-                    accountId={account.id}
+                </span>
+                <div className="w-10 h-10 rounded-full bg-gray-50 p-1.5 flex items-center justify-center ring-1 ring-gray-100">
+                  <Image
+                    src={`/images/${account.image}.png`}
+                    alt={account.type}
+                    width={28}
+                    height={28}
+                    className="object-contain"
                   />
                 </div>
-
-                <div className="card-content mt-4 relative">
-                  <h1 className="absolute bottom-40 left-2 text-white transform font-semibold drop-shadow-md bg-clip-text text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
-                    ${account.amount.toFixed(2)}
-                  </h1>
-                  <p className="absolute bottom-32 left-2 font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-yellow-300 to-gray-100">
-                    {account.type}
-                  </p>
-                </div>
               </div>
-            ))}
-          </div>
-          <div className="mt-10">
-            <TradeDisplay />
-          </div>
-          <Toaster position="bottom-left" richColors />
-        </>
+
+              {/* Content */}
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-500 mb-1">{account.type} Account</p>
+                <h3 className="text-3xl font-bold text-gray-900 tracking-tight">
+                  ${account.amount.toFixed(2)}
+                </h3>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="mt-6 pt-6 border-t border-gray-100 flex items-center gap-3">
+                <div className="flex-1">
+                  <ToggleTrade account={account} />
+                </div>
+                <ConfirmDelete
+                  accountData={safeAccountData}
+                  setAccountData={setAccountData}
+                  accountId={account.id}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       )}
+
+      <div className="pt-4">
+        <TradeDisplay />
+      </div>
+      
+      <Toaster position="bottom-left" richColors />
     </div>
   );
 };

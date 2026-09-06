@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { getTradeLogs } from "@/app/lib/getTradeLogs"; // ✅ Import your database function
-import { getUserId } from "@/app/lib/getUserId"; // ✅ Ensure correct user ID retrieval
+import { getTradeLogs } from "@/app/lib/getTradeLogs";
+import { getUserId } from "@/app/lib/getUserId";
 import { cryptoData } from "../trades/TradeSim";
 
 interface TradeLog {
   id: string;
-  crypto: string; // ✅ Add this field
-  matchedCrypto?: {
-    id?: string;
-    image: string;
-    name: string;
-  };
+  crypto: string;
+  matchedCrypto?: { id?: string; image: string; name: string };
   result: number;
 }
 
@@ -28,104 +24,111 @@ const RecentActivity: React.FC = () => {
         setLoading(false);
         return;
       }
-
       try {
         const response = await getTradeLogs(userId);
         if (response.success) {
           setTradeLogs(response.tradeLogs ?? []);
         } else {
-          setError(
-            typeof response.error === "string"
-              ? response.error
-              : JSON.stringify(response.error)
-          );
+          setError(typeof response.error === "string" ? response.error : "Failed to load activities.");
         }
-      } catch (err) {
+      } catch {
         setError("An unexpected error occurred.");
-        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchTradeLogs();
   }, []);
 
-  if (loading) {
-    return <p className="flex items-center">Loading recent activities...</p>;
-  }
+  // Show most recent 5 trades first
+  const recentTrades = tradeLogs.slice(-5).reverse(); 
 
-  if (error) {
-    return <p className="text-red-600 flex items-center">{error}</p>;
-  }
-
-  if (tradeLogs.length === 0) {
-    return (
-      <p className="flex items-center">Your Activities will appear here.</p>
-    );
-  }
-
-  const recentTrades = tradeLogs.slice(-4);
-  const formatTradeResult = (result: number): string =>
-    Math.abs(result) >= 1000
-      ? Math.round(result).toString()
-      : Math.abs(result) >= 100
-      ? result.toFixed(1)
+  const formatTradeResult = (result: number): string => {
+    const prefix = result >= 0 ? "+" : "";
+    const formatted = Math.abs(result) >= 1000 
+      ? Math.round(result).toLocaleString() 
+      : Math.abs(result) >= 100 
+      ? result.toFixed(1) 
       : result.toFixed(2);
+    return `${prefix}${formatted}`;
+  };
 
   const getImagepath = (cryptoName: string) => {
-    if (!cryptoName) {
-      console.log("Crypto name is missing, using fallback image.");
-      return "/crypto-images/bitcoin1.png";
-    }
-
+    if (!cryptoName) return "/crypto-images/bitcoin1.png";
     const matchedCrypto = cryptoData.find(
       (crypto) => crypto.name.toLowerCase() === cryptoName.toLowerCase()
     );
-
-    if (matchedCrypto) {
-      return matchedCrypto.image;
-    }
-
-    console.log("No match found, using fallback image.");
-    return "/crypto-images/bitcoin1.png";
+    return matchedCrypto ? matchedCrypto.image : "/crypto-images/bitcoin1.png";
   };
 
   return (
-    <div
-      id="resultDisplay"
-      className="row-span-3 xl:row-span-6 shadow-md rounded-2xl p-4 sm:p-6 lg:p-8"
-    >
-      <h3 className="text-lg font-semibold px-4 pt-2 pb-2">
-        Recent Activities
-      </h3>
-      <hr />
-      <div className="overflow-auto h-full">
-        {recentTrades.map((trade, index) => {
-          return (
-            <div
-              key={index}
-              className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 lg:gap-10 px-4 py-4 border-b"
-            >
-              <Image
-                src={getImagepath(trade.crypto ?? "")} // ✅ Use trade.crypto
-                alt={trade.crypto ?? "Unknown Crypto"} // ✅ Ensure alt text matches the crypto name
-                className="rounded-lg shadow-md"
-                height={32}
-                width={32}
-              />
-              <div className="flex flex-col justify-between gap-1">
-                <div className="font-bold text-gray-700">{trade.crypto}</div>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+        <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+          Last 5
+        </span>
+      </div>
+      <hr className="border-gray-100 mb-4" />
+
+      <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+        {loading ? (
+          <div className="space-y-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="animate-pulse flex items-center gap-3 p-3">
+                <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                </div>
+                <div className="h-6 w-16 bg-gray-200 rounded"></div>
               </div>
-              <div
-                className="flex text-xl font-semibold items-center"
-                style={{ color: trade.result < 1 ? "#ff7f51" : "#7678ED" }}
-              >
-                {formatTradeResult(trade.result)}
-              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="flex-1 flex items-center justify-center text-center py-10">
+            <p className="text-red-500 text-sm">{error}</p>
+          </div>
+        ) : recentTrades.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center text-center py-10">
+            <div>
+              <p className="text-gray-500 mb-1">No recent activities</p>
+              <p className="text-sm text-gray-400">Your trades will appear here.</p>
             </div>
-          );
-        })}
+          </div>
+        ) : (
+          recentTrades.map((trade, index) => {
+            const isProfit = trade.result >= 0;
+            return (
+              <div
+                key={trade.id || index}
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden ring-2 ring-white shadow-sm">
+                    <Image
+                      src={getImagepath(trade.crypto ?? "")}
+                      alt={trade.crypto ?? "Crypto"}
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">{trade.crypto || "Unknown"}</p>
+                    <p className="text-xs text-gray-500">Trade executed</p>
+                  </div>
+                </div>
+                <div className={`text-sm font-semibold px-2.5 py-1 rounded-lg ${
+                  isProfit 
+                    ? "text-green-700 bg-green-50" 
+                    : "text-red-700 bg-red-50"
+                }`}>
+                  {formatTradeResult(trade.result)}
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { MoveRight, Zap, MenuIcon, X } from "lucide-react";
-import Logo from "@/public/assets/logosaas.png";
+import Logo from "@/public/qwenlogo.png";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
@@ -46,7 +46,7 @@ export const SwiftLogin = () => {
           <div className="flex items-center justify-between">
             {/* Logo Section */}
             <div className="flex items-center">
-              <Image src={Logo} alt="Logo" height={60} width={60} />
+              <Image src={Logo} alt="CryptoGen logo" width={64} height={64} className="size-10 object-cover sm:size-14" />
               <p className="text-3xl text-black">
                 <span className="text-primary font-bold"> Crypto</span>Gen
               </p>

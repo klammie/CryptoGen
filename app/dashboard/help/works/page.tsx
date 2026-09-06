@@ -1,85 +1,77 @@
-import Image from "next/image";
-import AiLearning from "@/public/artificial-intelligence.png";
-import Analyze from "@/public/analyze.png";
-import Execute from "@/public/buy.png";
+import { Brain, LineChart, Zap } from "lucide-react";
 
-export default function Worksroute() {
+export default function WorksPage() {
+  const steps = [
+    {
+      number: "01",
+      title: "AI Learning & Pattern Recognition",
+      description:
+        "Our AI uses advanced machine learning to scan vast amounts of market data—analyzing price movements, volatility, trends, volume, and technical indicators. It filters out noise and prioritizes high-probability setups, negating emotional decision-making.",
+      icon: Brain,
+      color: "from-indigo-500 to-purple-500",
+    },
+    {
+      number: "02",
+      title: "Real-Time Market Analysis",
+      description:
+        "The market is continuously analyzed using advanced computational techniques. Machine learning models separate actionable signals from noise by evaluating trend strength, momentum, support/resistance levels, and macroeconomic influences to deliver precise insights.",
+      icon: LineChart,
+      color: "from-emerald-500 to-teal-500",
+    },
+    {
+      number: "03",
+      title: "Automated Trade Execution",
+      description:
+        "When optimal conditions are met, our AI executes trades automatically with zero human delay. The system integrates strict risk management strategies, including stop-loss and take-profit settings, to safeguard capital and tailor trades to your risk profile.",
+      icon: Zap,
+      color: "from-amber-500 to-orange-500",
+    },
+  ];
+
   return (
-    <div className="flex flex-col gap-10 mx-5 pb-4">
-      <div className="font-bold text-xl text-center">
-        <h1 className="text-3xl pb-5 pt-10 lg:text-4xl">
-          How does it work you might ask?
-        </h1>
-      </div>
-
-      {/* AI Learning Section */}
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        <Image
-          src={AiLearning}
-          alt="AI Learning"
-          className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48"
-        />
-        <div className="text-center md:text-left md:pl-10">
-          <h4 className="text-lg font-semibold mb-3">
-            Our AI is trained to identify specific market conditions
-          </h4>
-          <p className="text-sm md:text-base leading-6">
-            Our AI uses advanced machine learning to scan vast amounts of market
-            data—analyzing price movements, volatility, trends, volume, and
-            technical indicators—to spot key trading conditions like trends,
-            consolidations, breakouts, and reversals. By continuously learning
-            and adapting, it filters out noise and prioritizes high-probability
-            setups, negating emotional decision-making and aligning strategies
-            with the user&apos;s risk profile to maximize trading returns.
+    <div className="min-h-screen bg-gray-50/50 p-4 md:p-6 lg:p-8">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+            How Our AI Trading Works
+          </h1>
+          <p className="text-gray-500 mt-3 text-lg max-w-2xl mx-auto">
+            A fully automated, data-driven approach to maximize your trading potential while managing risk.
           </p>
         </div>
-      </div>
 
-      {/* Analyze Market Section */}
-      <div className="flex flex-col-reverse md:flex-row items-center gap-8">
-        <div className="text-center md:text-right md:pr-10">
-          <h4 className="text-lg font-semibold mb-3">
-            The market is then analyzed for these conditions
-          </h4>
-          <p className="text-sm md:text-base leading-6">
-            The market is analyzed using advanced computational techniques that
-            process real-time data such as price fluctuations, volume, and
-            technical indicators to identify conditions matching predefined
-            criteria. Machine learning models separate actionable signals from
-            noise by evaluating factors like trend strength, momentum, support
-            and resistance levels, and macroeconomic influences. This
-            continuous, data-driven analysis enables the AI to deliver precise
-            and timely insights for informed trading decisions.
-          </p>
-        </div>
-        <Image
-          src={Analyze}
-          alt="Analyze Market"
-          className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48"
-        />
-      </div>
+        {/* Steps */}
+        <div className="space-y-8">
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <div
+                key={index}
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-10 items-start"
+              >
+                {/* Icon & Number */}
+                <div className="flex-shrink-0 flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center shadow-lg`}>
+                    <Icon className="w-7 h-7 text-white" />
+                  </div>
+                  <span className="text-4xl font-bold text-gray-100 hidden md:block">
+                    {step.number}
+                  </span>
+                </div>
 
-      {/* Trade Execution Section */}
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        <Image
-          src={Execute}
-          alt="Trade Execution"
-          className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48"
-        />
-        <div className="text-center md:text-left md:pl-10">
-          <h4 className="text-lg font-semibold mb-3">
-            When conditions are met trades are executed
-          </h4>
-          <p>
-            When market conditions are met, our AI executes trades automatically
-            using advanced algorithms for optimal timing and precision. It
-            continuously monitors key signals like breakouts, reversals, and
-            volatility shifts, eliminating human delay and hesitation. The
-            system also integrates risk management strategies, including
-            stop-loss and take-profit settings, to safeguard capital and tailor
-            trades to individual risk profiles, ensuring even the smallest
-            opportunities are seized in dynamic market environments.
-          </p>
+                {/* Content */}
+                <div className="flex-1">
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
+                    {step.title}
+                  </h2>
+                  <p className="text-gray-600 leading-relaxed text-base">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

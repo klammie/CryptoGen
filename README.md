@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## MaxelPay Configuration
+
+Set these server-side environment variables in local development and Vercel:
+
+```env
+MAXELPAY_API_KEY=your_maxelpay_api_key
+MAXELPAY_WEBHOOK_SECRET=your_maxelpay_webhook_secret
+NEXT_PUBLIC_APP_URL=https://your-deployed-domain.com
+```
+
+In MaxelPay, configure the webhook URL as `https://your-deployed-domain.com/api/webhooks/maxelpay`.
+The wallet deposit button creates a hosted payment session. The wallet balance is credited only after a valid signed `payment.completed` webhook, and duplicate webhook deliveries are ignored.
+
 ## Getting Started
 
 First, run the development server:

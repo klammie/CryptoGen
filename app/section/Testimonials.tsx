@@ -1,158 +1,209 @@
 "use client";
 
-import avatar1 from "@/public/assets/avatar-1.png";
-import avatar2 from "@/public/assets/avatar-2.png";
-import avatar3 from "@/public/assets/avatar-3.png";
-import avatar4 from "@/public/assets/avatar-4.png";
-import avatar5 from "@/public/assets/avatar-5.png";
-import avatar6 from "@/public/assets/avatar-6.png";
-import avatar7 from "@/public/assets/avatar-7.png";
-import avatar8 from "@/public/assets/avatar-8.png";
-import avatar9 from "@/public/assets/avatar-9.png";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import React from "react";
+import { Star, Quote } from "lucide-react";
+import Image from "next/image";
+import { Reveal } from "@/app/components/ui/Reveal";
 
-const testimonials = [
+type Testimonial = {
+  name: string;
+  role: string;
+  avatar: string;
+  quote: string;
+  rating: number;
+  result: string;
+};
+
+const TESTIMONIALS: Testimonial[] = [
   {
-    text: "Ive connected this app with the Meta Trader 5 Investor login and manage my trades through MetaTrader 5",
-    imageSrc: avatar1.src,
-    name: "Jamie Rivera",
-    username: "@jamietechguru00",
+    name: "Marcus Chen",
+    role: "Independent Trader",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
+    quote:
+      "CryptoGen completely changed how I approach the market. The AI picks up on patterns I'd never spot myself.",
+    rating: 5,
+    result: "+142% in 6 months",
   },
   {
-    text: "I was a bit sceptical about this website but it has been 4 months now and I have no issue. I've made over $7,000",
-    imageSrc: avatar2.src,
-    name: "Josh Smith",
-    username: "@jjsmith",
+    name: "Sofia Alvarez",
+    role: "Portfolio Manager",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
+    quote:
+      "I've used Bloomberg, TradingView, and half a dozen bots. Nothing comes close to the precision of CryptoGen's neural engine.",
+    rating: 5,
+    result: "Saved 20h/week",
   },
   {
-    text: "Heard about this Website from a friend about 8 Months ago and I'm surprised its not more popular. Been making money ever since",
-    imageSrc: avatar3.src,
-    name: "Morgan Lee",
-    username: "@morganleewhiz",
+    name: "David Okonkwo",
+    role: "Crypto Fund Analyst",
+    avatar:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop",
+    quote:
+      "The risk controls alone are worth the subscription. Our fund's drawdown dropped by 60% in the first quarter.",
+    rating: 5,
+    result: "-60% drawdown",
   },
   {
-    text: "Unmatched Affiliate Rewards, Compared to the other companies that does affiliate, This one pays out waaayyy more!",
-    imageSrc: avatar4.src,
-    name: "Casey Jordan",
-    username: "@caseyj",
+    name: "Emma Johansson",
+    role: "Day Trader",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop",
+    quote:
+      "Setup took 10 minutes. Within a week I had three strategies running 24/7. It genuinely feels like cheating.",
+    rating: 5,
+    result: "3 strategies live",
   },
   {
-    text: "I am a Beginner in Trading and I have made more through this website than trading on my own.",
-    imageSrc: avatar5.src,
-    name: "Taylor Kim",
-    username: "@taylorkimm",
+    name: "Kenji Tanaka",
+    role: "Quant Developer",
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
+    quote:
+      "As a quant, I was skeptical. The codebase is clean, the API is well-documented, and the backtests are honest. Rare combo.",
+    rating: 5,
+    result: "API-first design",
   },
   {
-    text: "I've made over $200 in less than a week from the Passive account.",
-    imageSrc: avatar6.src,
-    name: "Erica Stan",
-    username: "@ericadastan",
-  },
-  {
-    text: "Easy to use, I am literally making money from the click of a button.",
-    imageSrc: avatar7.src,
-    name: "Jordan Petels",
-    username: "@jpateldesign",
-  },
-  {
-    text: "Customer Service took a while to respond but they solved my problem.",
-    imageSrc: avatar8.src,
-    name: "Leigh-Ann Dawson",
-    username: "@leedaw-tech",
-  },
-  {
-    text: "A Pro trader here, I must say this trading platform takes the emotions out of trading and you dont have to have prior trading knowledge.",
-    imageSrc: avatar9.src,
-    name: "Tim Harper",
-    username: "@tharper9",
-  },
-  {
-    text: "This site is a LIFESAVER. I was in so much debt and wanted to make some quick cash",
-    imageSrc: avatar1.src,
-    name: "David Lamel",
-    username: "@lameldd",
+    name: "Priya Patel",
+    role: "Retail Investor",
+    avatar:
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop",
+    quote:
+      "I started on the free plan with paper trading. Six months later I'm on Pro and the ROI has paid for itself ten times over.",
+    rating: 5,
+    result: "10× ROI",
   },
 ];
 
-const firstColumn = testimonials.slice(0, 3);
-const secondColumn = testimonials.slice(3, 6);
-const thirdColumn = testimonials.slice(6, 9);
+/** A single testimonial card with magnifying hover */
+function TestimonialCard({ t, index }: { t: Testimonial; index: number }) {
+  // Varied heights for a masonry feel
+  const tall = index % 3 === 1;
 
-const TestimonialsColumn = (props: {
-  className?: string;
-  testimonials: typeof testimonials;
-  duration?: number;
-}) => (
-  <div className={props.className}>
-    <motion.div
-      animate={{
-        translateY: "-50%",
+  return (
+    <motion.article
+      whileHover={{
+        scale: 1.035,
+        y: -6,
+        zIndex: 20,
       }}
-      transition={{
-        duration: props.duration || 10,
-        repeat: Infinity,
-        ease: "linear",
-        repeatType: "loop",
-      }}
-      className="flex flex-col gap-6 pb-6"
+      transition={{ type: "spring", stiffness: 380, damping: 24 }}
+      className={`group relative rounded-2xl border border-slate-200 bg-white p-6 transition-shadow duration-300 hover:shadow-2xl hover:shadow-indigo-500/10 hover:border-indigo-200 ${
+        tall ? "md:row-span-2" : ""
+      }`}
     >
-      {[...new Array(2)].fill(0).map((_, index) => (
-        <React.Fragment key={index}>
-          {props.testimonials.map(({ text, imageSrc, name, username }, idx) => (
-            <div className="card" key={idx}>
-              <div className="text-black">{text}</div>
-              <div className="flex items-center gap-2 mt-5">
-                <Image
-                  src={imageSrc}
-                  alt={name}
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-full"
-                />
-                <div className="flex text-black flex-col">
-                  <div className="font-medium tracking-tight leading-5">
-                    {name}
-                  </div>
-                  <div className="leading-5 tracking-tight">{username}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </React.Fragment>
-      ))}
-    </motion.div>
-  </div>
-);
+      {/* Magnifier glow — subtle radial on hover */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{
+          background:
+            "radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(99,102,241,0.08), transparent 60%)",
+        }}
+      />
+
+      {/* Quote icon */}
+      <Quote className="w-6 h-6 text-indigo-200 mb-4 flex-shrink-0 transition-colors group-hover:text-indigo-400" />
+
+      {/* Rating */}
+      <div className="flex items-center gap-0.5 mb-3">
+        {Array.from({ length: t.rating }).map((_, i) => (
+          <Star
+            key={i}
+            className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
+          />
+        ))}
+      </div>
+
+      {/* Quote text */}
+      <p className="text-slate-700 text-[15px] leading-relaxed mb-6">
+        "{t.quote}"
+      </p>
+
+      {/* Result chip */}
+      <div className="mb-5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-100">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+        <span className="text-xs font-semibold text-emerald-700">
+          {t.result}
+        </span>
+      </div>
+
+      {/* Author */}
+      <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
+        <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white shadow-sm">
+          <Image
+            src={t.avatar}
+            alt={t.name}
+            fill
+            className="object-cover"
+            sizes="40px"
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-slate-900 truncate">
+            {t.name}
+          </p>
+          <p className="text-xs text-slate-500 truncate">{t.role}</p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
 
 export const Testimonials = () => {
   return (
-    <section className="bg-white">
-      <div className="container">
-        <div className="section-heading">
-          <div className="flex justify-center gap-6">
-            <div className="tag text-black font-semi-bold">Testimonials</div>
+    <section className="relative py-24 md:py-32 bg-white overflow-hidden">
+      <div className="container relative z-10">
+        {/* Header */}
+        <Reveal>
+          <div className="max-w-2xl mx-auto text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-4">
+              Loved by traders
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight leading-[1.1]">
+              Real results from{" "}
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                real traders.
+              </span>
+            </h2>
+            <p className="mt-5 text-lg text-slate-600 leading-relaxed">
+              Join 12,000+ traders already automating their edge with CryptoGen.
+            </p>
           </div>
-          <h2 className="section-title mt-5">What our users say</h2>
-          <p className="section-description my-5">
-            See for yourself what our satisfied users have to say. Join now and
-            your success story could be next!
-          </p>
+        </Reveal>
+
+        {/* Masonry-style grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr">
+          {TESTIMONIALS.map((t, i) => (
+            <Reveal key={t.name} delay={i * 0.06}>
+              <TestimonialCard t={t} index={i} />
+            </Reveal>
+          ))}
         </div>
-        <div className="flex justify-center gap-6 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] max-h-[738px] overflow-hidden">
-          <TestimonialsColumn testimonials={firstColumn} duration={15} />
-          <TestimonialsColumn
-            testimonials={secondColumn}
-            className="hidden md:block"
-            duration={19}
-          />
-          <TestimonialsColumn
-            testimonials={thirdColumn}
-            className="hidden lg:block"
-            duration={17}
-          />
-        </div>
+
+        {/* Aggregate stats */}
+        <Reveal delay={0.1}>
+          <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {[
+              { value: "4.9", label: "App Store rating" },
+              { value: "12k+", label: "Active traders" },
+              { value: "$240M", label: "Traded volume" },
+              { value: "87%", label: "Retention rate" },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="text-center py-5 px-3 rounded-xl border border-slate-200 bg-slate-50/50"
+              >
+                <p className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+                  {s.value}
+                </p>
+                <p className="text-xs text-slate-500 mt-1">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </Reveal>
       </div>
     </section>
   );

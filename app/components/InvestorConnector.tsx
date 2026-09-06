@@ -1,67 +1,97 @@
+"use client";
 import React, { useState } from "react";
 import {
   Dialog,
   DialogTrigger,
   DialogContent,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Unplug } from "lucide-react";
+import { toast } from "sonner";
+import { Unplug, Copy, Check } from "lucide-react";
 
-const MyDialog = () => {
-  const [isOpen, setIsOpen] = useState(false); // State to control dialog visibility
+const InvestorConnector = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const handleClose = () => {
-    setIsOpen(false); // Close the dialog
+  const credentials = [
+    { label: "Login", value: "163596899" },
+    { label: "Password", value: "s1eozec" },
+    { label: "Investor", value: "7pwqbot" },
+  ];
+
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(label);
+    toast.success(`${label} copied to clipboard`);
+    setTimeout(() => setCopiedField(null), 2000);
   };
 
   return (
-    <div>
-      {/* Trigger to open the dialog */}
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button
-            onClick={() => setIsOpen(true)}
-            className="mt-2 size-9  bg-blue-500 flex items-center justify-center p-2 rounded-md  hover:bg-gray-300 transition duration-200"
-          >
-            <Unplug className="w-5 h-5 text-gray-800" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-md p-6 rounded-lg shadow-md">
-          <DialogTitle className="text-xl font-bold text-gray-800 text-center">
-            Investor Account Log-in
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 rounded-xl border-gray-200 hover:bg-gray-50"
+          title="View Investor Credentials"
+        >
+          <Unplug className="w-4 h-4 text-gray-600" />
+        </Button>
+      </DialogTrigger>
+      
+      <DialogContent className="sm:max-w-[425px] rounded-2xl p-6">
+        <div className="text-center mb-6">
+          <div className="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Unplug className="w-6 h-6 text-indigo-600" />
+          </div>
+          <DialogTitle className="text-xl font-bold text-gray-900">
+            Investor Credentials
           </DialogTitle>
+          <DialogDescription className="mt-2 text-gray-500">
+            Use these details to connect and view trades inside MetaTrader.
+          </DialogDescription>
+        </div>
 
-          <h3 className="font-medium text-gray-700 text-center mb-3">
-            View and manage trades inside MetaTrader
-          </h3>
-
-          <div className="flex flex-col justify-evenly p-3 bg-gray-100 rounded-md">
-            <div className="grid grid-cols-2 gap-4 text-gray-700">
-              <p className="font-medium">Login:</p>
-              <p className="font-semibold text-gray-900">163596899</p>
-
-              <p className="font-medium">Password:</p>
-              <p className="font-semibold text-gray-900">s1eozec</p>
-
-              <p className="font-medium">Investor:</p>
-              <p className="font-semibold text-gray-900">7pwqbot</p>
-            </div>
-          </div>
-
-          {/* Button to close the dialog */}
-          <div className="flex justify-center mt-4">
-            <Button
-              onClick={handleClose}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition duration-200"
+        <div className="space-y-3">
+          {credentials.map((cred) => (
+            <div
+              key={cred.label}
+              className="flex items-center justify-between p-3 bg-gray-50 border border-gray-100 rounded-xl"
             >
-              Proceed
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {cred.label}
+                </p>
+                <p className="text-sm font-mono font-semibold text-gray-900 mt-0.5">
+                  {cred.value}
+                </p>
+              </div>
+              <button
+                onClick={() => handleCopy(cred.value, cred.label)}
+                className="p-2 rounded-lg hover:bg-white transition-colors text-gray-400 hover:text-indigo-600"
+                title={`Copy ${cred.label}`}
+              >
+                {copiedField === cred.label ? (
+                  <Check className="w-4 h-4 text-green-500" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <Button
+          onClick={() => setIsOpen(false)}
+          className="w-full mt-6 rounded-xl h-11 font-medium bg-gray-900 hover:bg-gray-800"
+        >
+          Done
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-export default MyDialog;
+export default InvestorConnector;

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "./lib/auth";
+import { PageEnter } from "@/app/components/ui/PageEnter";
 import { Header } from "./section/Header";
 import { Hero } from "./section/Hero";
 import { LogoTicker } from "./section/LogoTicker";
@@ -17,15 +18,19 @@ export default async function Home() {
   }
 
   return (
-    <div className="bg-[#EAEEFE] mx-auto">
-      <Header />
-      <Hero />
-      <LogoTicker />
-      <ProductShowcase />
-      <Pricing />
-      <Testimonials />
-      <CallToAction />
-      <Footer />
-    </div>
+    <PageEnter>
+      <div className="min-h-screen bg-white antialiased">
+        <Header />
+        <main>
+          <Hero />
+          <LogoTicker />
+          <ProductShowcase />
+          <Pricing />
+          <Testimonials />
+          <CallToAction />
+        </main>
+        <Footer />
+      </div>
+    </PageEnter>
   );
 }

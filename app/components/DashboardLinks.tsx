@@ -57,23 +57,29 @@ export const dashboardLinks: iAppProps[] = [
 
 export function DashboardLinks() {
   const pathname = usePathname();
+
   return (
-    <>
-      {dashboardLinks.map((link) => (
-        <Link
-          className={cn(
-            pathname === link.href
-              ? "text-primary bg-primary/10"
-              : "text-muted-foreground hover:text-foreground",
-            "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"
-          )}
-          key={link.id}
-          href={link.href}
-        >
-          <link.icon className="size-4" />
-          {link.name}
-        </Link>
-      ))}
-    </>
+    <nav className="flex flex-col gap-1.5 px-3">
+      {dashboardLinks.map((link) => {
+        const Icon = link.icon;
+        const isActive = pathname === link.href;
+        
+        return (
+          <Link
+            key={link.id}
+            href={link.href}
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+              isActive
+                ? "bg-gray-900 text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+            )}
+          >
+            <Icon className={cn("h-4.5 w-4.5", isActive ? "text-white" : "text-gray-500")} />
+            {link.name}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
