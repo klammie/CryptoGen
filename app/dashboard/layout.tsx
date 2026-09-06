@@ -49,7 +49,13 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   const session = await requireUser();
-  const data = await getData(session?.user?.id as string);
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return redirect("/");
+  }
+
+  const data = await getData(userId);
 
   return (
     <div className="min-h-screen w-full flex bg-gray-50/50">

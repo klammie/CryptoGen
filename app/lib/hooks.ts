@@ -5,8 +5,9 @@ import { auth } from './auth';
 export async function requireUser() {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     return redirect("/");
   }
- return session;
+
+  return session;
 }
