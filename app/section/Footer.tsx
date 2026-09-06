@@ -1,9 +1,7 @@
 "use client";
 
 import { Twitter, Instagram, Youtube, Linkedin } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import logo from "@/public/qwenlogo.png";
 import { MotionLink } from "@/app/components/ui/MotionLink";
 import { Reveal } from "@/app/components/ui/Reveal";
 import { CryptoGenLogo } from "../components/ui/CryptoGenLogo";

@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { MoveRight, MenuIcon, X } from "lucide-react";
-import Logo from "@/public/qwenlogo.png";
-import Image from "next/image";
 import Link from "next/link";
 import AuthModal from "@/app/components/AuthModal";
 import { MotionLink } from "@/app/components/ui/MotionLink";
@@ -36,7 +34,7 @@ export const Header = () => {
   }, [pathname]);
 
   const isActive = (item: string) =>
-    pathname.startsWith(`/${item.toLowerCase()}`);
+    pathname?.startsWith(`/${item.toLowerCase()}`);
 
   return (
     <motion.header

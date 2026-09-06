@@ -119,7 +119,7 @@ function TestimonialCard({ t, index }: { t: Testimonial; index: number }) {
 
       {/* Quote text */}
       <p className="text-slate-700 text-[15px] leading-relaxed mb-6">
-        "{t.quote}"
+        &quot;{t.quote}&quot;
       </p>
 
       {/* Result chip */}
