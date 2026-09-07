@@ -17,7 +17,7 @@ function getAppUrl() {
 export async function POST(request: Request) {
   const session = await auth()
   const userId = session?.user?.id
-  const apiKey = process.env.MAXELPAY_API_KEY
+  const apiKey = process.env.MAXELPAY_API_KEY?.trim()
 
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!apiKey) return NextResponse.json({ error: "MaxelPay is not configured" }, { status: 503 })

@@ -2,60 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Theme tokens ────────────────────────────────────────────────────────────
+   Brand: indigo-600 primary · slate neutrals · purple/orange chart pair.
+   Values are space-separated HSL triplets, consumed as hsl(var(--token)).
+────────────────────────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 100%;               /* white */
+    --foreground: 222.2 47.4% 11.2%;       /* slate-900 */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222.2 47.4% 11.2%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    --primary: 243.4 75.4% 58.6%;          /* indigo-600 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;            /* slate-100 */
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
+    --muted-foreground: 215.4 16.3% 46.9%; /* slate-500 */
+    --accent: 226.2 100% 96.7%;            /* indigo-50 */
+    --accent-foreground: 243.4 75.4% 58.6%;
+    --destructive: 347 77.2% 50.2%;        /* rose-600 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 214.3 31.8% 91.4%;           /* slate-200 */
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --ring: 238.7 86.7% 66.7%;             /* indigo-500 */
+    --radius: 0.75rem;
+    --chart-1: 243.4 75.4% 58.6%;          /* indigo-600 → wins / profit */
+    --chart-2: 24.6 95% 53.1%;             /* orange-500 → losses */
+    --chart-3: 214.3 31.8% 91.4%;
+    --chart-4: 160 84% 39%;
+    --chart-5: 262 83% 66%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --background: 222.2 84% 4.9%;          /* slate-950 */
+    --foreground: 210 40% 96.1%;           /* slate-100 */
+    --card: 222.2 47.4% 11.2%;             /* slate-900 */
+    --card-foreground: 210 40% 96.1%;
+    --popover: 222.2 47.4% 11.2%;
+    --popover-foreground: 210 40% 96.1%;
+    --primary: 234.5 89.7% 74.3%;          /* indigo-400 */
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;        /* slate-800 */
+    --secondary-foreground: 210 40% 96.1%;
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted-foreground: 215.4 20.2% 65.1%; /* slate-400 */
     --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
+    --accent-foreground: 234.5 89.7% 74.3%;
+    --destructive: 350 89.2% 60.2%;        /* rose-500 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 217.2 32.6% 17.5%;           /* slate-800 */
     --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --ring: 238.7 86.7% 66.7%;
+    --chart-1: 234.5 89.7% 74.3%;          /* indigo-400 */
+    --chart-2: 27.2 95.9% 65.1%;           /* orange-400 */
+    --chart-3: 217.2 32.6% 17.5%;
+    --chart-4: 160 84% 39%;
+    --chart-5: 262 83% 66%;
   }
 }
 
@@ -68,6 +72,32 @@
   }
 }
 
+/* ─── Container helper ────────────────────────────────────────────────────────
+   Centers Tailwind's .container and adds gutters WITHOUT capping its
+   responsive max-width (the old 600px/800px rules squeezed every section).
+────────────────────────────────────────────────────────────────────────────── */
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Keep ultra-wide screens at a comfortable measure (matches max-w-7xl) */
+@media (min-width: 1536px) {
+  .container {
+    max-width: 80rem;
+  }
+}
+
+/* ─── Legacy helpers (kept only if still referenced) ─────────────────────── */
 @media (min-width: 768px) {
   .custom-grid-rows {
     grid-template-rows: repeat(8, 20vh);
@@ -80,80 +110,28 @@
   }
 }
 
-.card {
-  border: 1px solid #e2e2e2;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 16px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.first-div,
-.second-div {
-  border: 1px solid #e2e2e2;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 16px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-button {
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #3b82f6; /* Darker blue shade */
-}
-
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 16px;
-}
-
-label {
-  margin-right: 8px;
-}
-
-select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
 @layer components {
   .btn {
     @apply px-4 py-2 rounded-lg font-medium inline-flex items-center justify-center tracking-tight;
   }
-
   .btn-primary {
     @apply bg-black text-white;
   }
-
   .btn-text {
     @apply text-black bg-transparent;
   }
-
   .logo-ticker-image {
     @apply h-8 w-auto;
   }
-
   .tag {
     @apply text-sm inline-flex border border-[#222]/10 px-3 py-1 rounded-lg tracking-tight;
   }
-
   .section-title {
     @apply text-center text-3xl md:text-[54px] md:leading-[60px] font-bold tracking-tighter bg-gradient-to-b from-black to-[#001E80] text-transparent bg-clip-text;
   }
   .section-description {
     @apply text-center text-[22px] leading-[30px] tracking-tight text-[#010D3E];
   }
-
   .section-heading {
     @apply max-w-[540px] mx-auto;
   }

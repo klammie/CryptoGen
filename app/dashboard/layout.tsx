@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
-import Logo from "@/public/qwenlogo.png";
+import { CryptoGenLogo } from "../components/ui/CryptoGenLogo";
 import { DashboardLinks } from "../components/DashboardLinks";
 import {
   Sheet,
@@ -58,19 +58,26 @@ export default async function DashboardLayout({
 
   const data = await getData(userId);
 
+  // ── Resolve who is logged in for the avatar ───────────────────────────────
+  const displayName =
+    data.userName ?? session.user?.name ?? session.user?.email ?? "Member";
+  const initials = displayName
+    .trim()
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+  const avatarUrl = session.user?.image ?? null;
+
   return (
     <div className="min-h-screen w-full flex bg-gray-50/50">
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[260px] flex-col bg-white border-r border-gray-100">
+      {/* ── Desktop Sidebar — sticky, stays put while content scrolls ── */}
+      <aside className="hidden md:flex w-[260px] shrink-0 flex-col bg-white border-r border-gray-100 sticky top-0 h-screen overflow-y-auto">
         {/* Logo Area */}
         <div className="flex h-16 items-center px-6 border-b border-gray-100">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white">
-              <Image src={Logo} alt="CryptoGen logo" className="w-full h-full object-cover" />
-            </div>
-            <span className="text-xl font-bold text-gray-900 tracking-tight">
-              Crypto<span className="text-indigo-600">Gen</span>
-            </span>
+            <CryptoGenLogo size={30} />
           </Link>
         </div>
 
@@ -87,10 +94,7 @@ export default async function DashboardLayout({
           {/* Mobile Menu Trigger */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                className="md:hidden shrink-0 h-9 w-9 p-0"
-                variant="outline"
-              >
+              <Button className="md:hidden shrink-0 h-9 w-9 p-0" variant="outline">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
@@ -99,15 +103,10 @@ export default async function DashboardLayout({
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <div className="flex h-16 items-center px-6 border-b border-gray-100">
                 <Link href="/" className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white">
-                    <Image src={Logo} alt="CryptoGen logo" className="w-full h-full object-cover" />
-                  </div>
-                  <span className="text-xl font-bold text-gray-900 tracking-tight">
-                    Crypto<span className="text-indigo-600">Gen</span>
-                  </span>
+                  <CryptoGenLogo size={30} />
                 </Link>
               </div>
-              <div className="flex-1 py-6">
+              <div className="flex-1 py-6 overflow-y-auto">
                 <DashboardLinks />
               </div>
             </SheetContent>
@@ -116,7 +115,7 @@ export default async function DashboardLayout({
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Stats Chips (Hidden on small mobile, shown on sm+) */}
+          {/* Stats Chips */}
           <div className="hidden sm:flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg">
               <span className="text-xs font-medium text-gray-500">Balance</span>
@@ -126,41 +125,64 @@ export default async function DashboardLayout({
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg">
               <KeySquare className="w-3.5 h-3.5 text-indigo-600" />
-              <span className="text-sm font-bold text-gray-900">
-                {data.keyz}
-              </span>
+              <span className="text-sm font-bold text-gray-900">{data.keyz}</span>
             </div>
           </div>
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            
+
             {/* User Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-9 w-9 rounded-full ring-1 ring-gray-200 hover:ring-gray-300 transition-all"
+                  className="relative h-9 w-9 rounded-full p-0 overflow-hidden ring-1 ring-gray-200 hover:ring-indigo-300 transition-all"
                 >
-                  <Image
-                    className="h-full w-full rounded-full object-cover"
-                    src={session.user?.image as string || "/default-avatar.png"}
-                    alt="Profile"
-                    height={36}
-                    width={36}
-                  />
+                  {avatarUrl ? (
+                    <Image
+                      src={avatarUrl}
+                      alt={displayName}
+                      width={36}
+                      height={36}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    /* Initials fallback — always shows WHO is logged in */
+                    <span className="flex h-full w-full items-center justify-center rounded-full bg-indigo-600 text-[11px] font-semibold text-white">
+                      {initials}
+                    </span>
+                  )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 mt-2" align="end" forceMount>
+
+              <DropdownMenuContent className="w-56 mt-2" align="end">
                 <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none text-gray-900">
-                      {data.userName}
-                    </p>
-                    <p className="text-xs leading-none text-gray-500">
-                      {session.user?.email || "Member"}
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full">
+                      {avatarUrl ? (
+                        <Image
+                          src={avatarUrl}
+                          alt={displayName}
+                          width={36}
+                          height={36}
+                          className="h-full w-full rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center rounded-full bg-indigo-600 text-[11px] font-semibold text-white">
+                          {initials}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none text-gray-900">
+                        {displayName}
+                      </p>
+                      <p className="text-xs leading-none text-gray-500">
+                        {session.user?.email || "Member"}
+                      </p>
+                    </div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,11 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Toaster, toast } from "sonner";
 import AccountSelector from "./AccountSelector";
 import { CashoutAction } from "../lib/CashoutAction";
 import { deleteLiveAccount } from "../lib/deleteLiveAccount";
-import { ArrowDownLeft, Wallet } from "lucide-react";
+import { AlertTriangle, ArrowDownLeft, Wallet } from "lucide-react";
 
 export function Cashout() {
   const [accBal, setAccBal] = useState<number>(1000);
@@ -21,72 +21,93 @@ export function Cashout() {
 
   const handleCashout = async (amount: number) => {
     if (amount <= 0) {
-      toast.error("Invalid account selection");
       return;
     }
-
     setLoading(true);
     const formData = new FormData();
     formData.set("valueToAdd", amount.toString());
-
     try {
       const updatedAccount = await CashoutAction(formData);
       if (!updatedAccount) throw new Error("Cashout failed");
-      
       setAccBal((prev) => prev + amount);
-      
       try {
         await deleteLiveAccount();
-        toast.success("Funds successfully transferred to main balance!");
       } catch (deleteError) {
         console.error("Error deleting live account:", deleteError);
-        toast.error("Funds transferred, but failed to close live account");
       }
     } catch (error) {
       console.error("Error updating account balance:", error);
-      toast.error("Failed to transfer funds");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="secondary" className="rounded-xl h-10 px-4 font-medium" disabled={loading}>
-            <ArrowDownLeft className="w-4 h-4 mr-2" />
-            Cash Out
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl">Cash Out to Main Balance</DialogTitle>
-            <DialogDescription>
-              Transfer funds from your Live Trading Account back to your main wallet.
-            </DialogDescription>
-          </DialogHeader>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          disabled={loading}
+          className="group relative h-10 overflow-hidden rounded-xl border-indigo-400/30 bg-indigo-500/15 px-4 font-semibold text-indigo-100 backdrop-blur hover:bg-indigo-500/25 hover:text-white"
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -translate-x-[120%] bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 group-hover:translate-x-[120%]"
+          />
+          <ArrowDownLeft className="mr-2 h-4 w-4 text-indigo-300" />
+          Cash Out
+        </Button>
+      </DialogTrigger>
 
-          {/* Balance Highlight */}
-          <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 flex items-center justify-between mt-2">
+      <DialogContent className="sm:max-w-[440px] overflow-hidden rounded-2xl border-slate-200 p-0 dark:border-slate-800">
+        <div className="h-1 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500" />
+
+        <DialogHeader className="px-6 pb-2 pt-6">
+          <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl border border-purple-100 bg-purple-50 dark:border-purple-500/20 dark:bg-purple-500/10">
+            <ArrowDownLeft className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+          </div>
+          <DialogTitle className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Cash Out to Main Balance
+          </DialogTitle>
+          <DialogDescription className="text-[13px] leading-relaxed">
+            Transfer funds from your Live Trading Account back to your main wallet.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-5 px-6 pb-6 pt-2">
+          {/* Main balance highlight */}
+          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 dark:border-slate-700 dark:bg-slate-800/50">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-gray-700" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-indigo-100 bg-indigo-50 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+                <Wallet className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
               </div>
               <div>
-                <p className="text-xs font-medium text-gray-500">Main Balance</p>
-                <p className="text-lg font-bold text-gray-900">${accBal.toLocaleString()}</p>
+                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+                  Main Balance
+                </p>
+                <p className="text-sm font-bold tabular-nums text-slate-900 dark:text-white">
+                  ${accBal.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-6">
-            <label className="text-sm font-medium text-gray-700 mb-3 block">Select Account to Cash Out</label>
+          {/* Account selector */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Select account to cash out
+            </label>
             <AccountSelector onAccountSelect={handleCashout} />
           </div>
-        </DialogContent>
-      </Dialog>
-      <Toaster richColors position="bottom-left" />
-    </>
+
+          {/* Warning note */}
+          <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50/70 px-3.5 py-2.5 text-[12px] leading-relaxed text-amber-800 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-200/90">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+            Cashing out transfers the full live account balance to your main wallet
+            and closes the live account.
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

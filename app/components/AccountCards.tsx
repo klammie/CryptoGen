@@ -1,10 +1,12 @@
 "use client";
+
 import React, { useState } from "react";
 import { Check, KeyRound, ShoppingCart, Tag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -64,7 +66,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
         toast.error("User authentication failed.");
         return;
       }
-      
+
       const response = await addDemoAccount({
         type,
         amount: currentSelectedAmount,
@@ -102,11 +104,9 @@ const AccountCard: React.FC<AccountCardProps> = ({
   const handleCheckout = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsProcessing(true);
-    
     try {
       const formData = new FormData(e.currentTarget);
       await updateAccbal(formData);
-      
       await addLiveAccount({
         type,
         amount: currentSelectedAmount,
@@ -114,7 +114,6 @@ const AccountCard: React.FC<AccountCardProps> = ({
         isActive: false,
         cryptoId: String(cryptoId),
       });
-      
       toast.success("Account purchased successfully!");
     } catch {
       toast.error("Failed to process purchase. Please check your funds.");
@@ -123,166 +122,234 @@ const AccountCard: React.FC<AccountCardProps> = ({
     }
   };
 
-  // Badge color based on account type
+  // Badge style on the dark panel, based on account type
   const getBadgeStyle = () => {
     switch (type) {
       case "Passive":
-        return "bg-emerald-50 text-emerald-700 ring-emerald-600/20";
+        return "bg-emerald-500/15 text-emerald-300 ring-emerald-400/30";
       case "Semi-Aggressive":
-        return "bg-amber-50 text-amber-700 ring-amber-600/20";
+        return "bg-amber-500/15 text-amber-300 ring-amber-400/30";
       case "Aggressive":
-        return "bg-rose-50 text-rose-700 ring-rose-600/20";
+        return "bg-rose-500/15 text-rose-300 ring-rose-400/30";
       default:
-        return "bg-gray-50 text-gray-700 ring-gray-600/20";
+        return "bg-white/10 text-slate-300 ring-white/15";
     }
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-full overflow-hidden">
-      {/* Card Header / Image Area */}
-      <div className="relative h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6 border-b border-gray-100">
-        <span className={`absolute top-4 left-4 px-2.5 py-1 text-xs font-semibold rounded-full ring-1 ${getBadgeStyle()}`}>
-          {type}
-        </span>
-        <Image
-          src={`/images/${image}.png`}
-          alt={`${type} account`}
-          width={160}
-          height={160}
-          className="object-contain drop-shadow-sm"
-        />
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+      {/* ── Dark bank-style panel (matches AccountOverview) ── */}
+      <div className="relative m-5 mb-0 overflow-hidden rounded-2xl bg-slate-900 p-5 text-white dark:border dark:border-slate-700/60">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-indigo-500/25 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-purple-500/15 blur-2xl" />
+
+        <div className="relative z-10">
+          <div className="flex items-start justify-between">
+            <span
+              className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ${getBadgeStyle()}`}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-current" />
+              {type}
+            </span>
+
+            {/* Image chip — same frosted style as AccountOverview */}
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+              <Image
+                src={`/images/${image}.png`}
+                alt={`${type} account`}
+                width={34}
+                height={34}
+                className="object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
+              Account Capital
+            </p>
+            <div className="mt-1 flex items-baseline gap-1">
+              <span className="text-3xl font-bold tracking-tight tabular-nums">
+                ${currentSelectedAmount.toLocaleString()}
+              </span>
+              <span className="text-[12px] font-medium text-slate-400">/ account</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Card Content */}
-      <div className="p-6 flex flex-col flex-1">
-        {/* Price & Amount Selector */}
-        <div className="mb-6">
-          <div className="flex items-baseline gap-1 mb-4">
-            <span className="text-4xl font-bold text-gray-900 tracking-tight">
-              ${currentSelectedAmount.toLocaleString()}
-            </span>
-            <span className="text-sm font-medium text-gray-500">/ account</span>
-          </div>
-          
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Select Capital</p>
-          <div className="flex flex-wrap gap-2">
-            {availableAmounts.map((amt) => (
-              <button
-                key={amt}
-                type="button"
-                onClick={() => {
-                  handleAmountChange(type, amt);
-                  setTotalAmount(amt);
-                  setDiscountAmount(0);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  currentSelectedAmount === amt
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                ${amt.toLocaleString()}
-              </button>
-            ))}
-          </div>
+      {/* ── Card body ── */}
+      <div className="flex flex-1 flex-col p-5">
+        {/* Capital selector */}
+        <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+          Select Capital
+        </p>
+        <div className="mb-5 flex flex-wrap gap-2">
+          {availableAmounts.map((amt) => (
+            <button
+              key={amt}
+              type="button"
+              onClick={() => {
+                handleAmountChange(type, amt);
+                setTotalAmount(amt);
+                setDiscountAmount(0);
+              }}
+              className={`rounded-lg border px-3 py-1.5 text-[13px] font-semibold transition-colors ${
+                currentSelectedAmount === amt
+                  ? "border-indigo-600 bg-indigo-600 text-white shadow-sm shadow-indigo-600/25"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-indigo-500/40 dark:hover:text-indigo-300"
+              }`}
+            >
+              ${amt.toLocaleString()}
+            </button>
+          ))}
         </div>
 
-        {/* Features List */}
-        <div className="flex-1 mb-6">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">What&apos;s included</p>
-          <ul className="space-y-3">
-            {features.map((feature, index) => (
-              <li key={index} className="flex items-start gap-2.5 text-sm text-gray-700">
-                <Check className="w-4 h-4 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Features */}
+        <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+          What&apos;s included
+        </p>
+        <ul className="mb-6 flex-1 space-y-2.5">
+          {features.map((feature, index) => (
+            <li
+              key={index}
+              className="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-300"
+            >
+              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-indigo-600 dark:text-indigo-400" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
 
         {/* Actions */}
-        <div className="space-y-3 mt-auto">
+        <div className="space-y-3">
           <Dialog>
             <DialogTrigger asChild>
-              <Button 
-                className="w-full h-11 rounded-xl font-semibold shadow-sm"
-                onClick={() => setSelectedAccount({ ...accountData.find(a => a.amount === currentSelectedAmount)! })}
+              <Button
+                className="group relative h-11 w-full overflow-hidden rounded-xl bg-slate-900 font-semibold text-white hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+                onClick={() =>
+                  setSelectedAccount({
+                    ...accountData.find((a) => a.amount === currentSelectedAmount)!,
+                  })
+                }
               >
-                <ShoppingCart className="w-4 h-4 mr-2" />
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -translate-x-[120%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-[120%]"
+                />
+                <ShoppingCart className="mr-2 h-4 w-4" />
                 Purchase Live Account
               </Button>
             </DialogTrigger>
-            
-            {/* Checkout Dialog */}
-            <DialogContent className="sm:max-w-[425px] rounded-2xl p-0 overflow-hidden">
-              <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-gray-900">Order Summary</DialogTitle>
-                </DialogHeader>
-              </div>
-              
-              <form onSubmit={handleCheckout} className="p-6 space-y-6">
-                {/* Item Details */}
-                <div className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                    <Image src={`/images/${image}.png`} alt={type} width={32} height={32} className="object-contain" />
+
+            {/* ── Checkout modal ── */}
+            <DialogContent className="sm:max-w-[440px] overflow-hidden rounded-2xl border-slate-200 p-0 dark:border-slate-800">
+              <div className="h-1 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500" />
+
+              <DialogHeader className="px-6 pb-2 pt-6">
+                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+                  <ShoppingCart className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <DialogTitle className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+                  Order Summary
+                </DialogTitle>
+                <DialogDescription className="text-[13px] leading-relaxed">
+                  Review your order and complete the purchase to activate your live
+                  account.
+                </DialogDescription>
+              </DialogHeader>
+
+              <form onSubmit={handleCheckout} className="space-y-5 px-6 pb-6 pt-2">
+                {/* Item */}
+                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 dark:border-slate-700 dark:bg-slate-800/50">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-indigo-100 bg-indigo-50 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+                    <Image
+                      src={`/images/${image}.png`}
+                      alt={type}
+                      width={26}
+                      height={26}
+                      className="object-contain"
+                    />
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-gray-900">{type} Account</p>
-                    <p className="text-sm text-gray-500">Capital: ${currentSelectedAmount.toLocaleString()}</p>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                      {type} Account
+                    </p>
+                    <p className="text-[12px] text-slate-500 dark:text-slate-400">
+                      Capital: ${currentSelectedAmount.toLocaleString()}
+                    </p>
                   </div>
                 </div>
 
-                {/* Discount Code */}
+                {/* Discount code */}
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1.5 block">Discount Code</label>
+                  <label
+                    htmlFor="discount-code"
+                    className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  >
+                    Discount Code
+                  </label>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
-                      <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Tag className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                       <input
+                        id="discount-code"
                         type="text"
                         placeholder="Enter code"
                         value={discountCode}
                         onChange={(e) => setDiscountCode(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                        className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                       />
                     </div>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
+                    <Button
+                      type="button"
+                      variant="outline"
                       onClick={handleApplyDiscount}
-                      className="px-4 rounded-lg"
+                      className="rounded-xl border-slate-200 px-4 font-semibold text-slate-600 hover:border-indigo-200 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-300 dark:hover:border-indigo-500/40 dark:hover:text-indigo-300"
                     >
                       Apply
                     </Button>
                   </div>
                 </div>
 
-                {/* Pricing Breakdown */}
-                <div className="border-t border-gray-100 pt-4 space-y-2">
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>Subtotal</span>
-                    <span>${currentSelectedAmount.toLocaleString()}</span>
+                {/* Pricing breakdown */}
+                <div className="space-y-2 border-t border-slate-100 pt-4 dark:border-slate-800">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-500 dark:text-slate-400">Subtotal</span>
+                    <span className="tabular-nums text-slate-900 dark:text-white">
+                      ${currentSelectedAmount.toLocaleString()}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Discount</span>
-                    <span className="text-emerald-600 font-medium">-${discountAmount.toLocaleString()}</span>
+                    <span className="text-slate-500 dark:text-slate-400">Discount</span>
+                    <span className="font-medium tabular-nums text-emerald-600 dark:text-emerald-400">
+                      -${discountAmount.toLocaleString()}
+                    </span>
                   </div>
-                  <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-100">
-                    <span>Total</span>
-                    <span>${totalAmount.toLocaleString()}</span>
+                  <div className="flex justify-between border-t border-slate-100 pt-3 text-base font-bold dark:border-slate-800">
+                    <span className="text-slate-900 dark:text-white">Total</span>
+                    <span className="tabular-nums text-slate-900 dark:text-white">
+                      ${totalAmount.toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
                 <input type="hidden" name="totalAmount" value={totalAmount} />
-                
-                <Button 
-                  type="submit" 
-                  className="w-full h-11 rounded-xl font-semibold" 
+
+                <Button
+                  type="submit"
                   disabled={isProcessing}
+                  className="group relative h-11 w-full overflow-hidden rounded-xl bg-slate-900 font-semibold text-white hover:bg-black disabled:opacity-60 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
                 >
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 -translate-x-[120%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-[120%]"
+                  />
                   {isProcessing ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
                   ) : (
                     `Pay $${totalAmount.toLocaleString()}`
                   )}
@@ -291,20 +358,27 @@ const AccountCard: React.FC<AccountCardProps> = ({
             </DialogContent>
           </Dialog>
 
-          <Button 
-            variant="outline" 
-            className="w-full h-11 rounded-xl font-medium text-gray-700 hover:bg-gray-50"
+          <Button
+            variant="outline"
+            className="h-11 w-full rounded-xl border-slate-200 font-medium text-slate-600 hover:border-indigo-200 hover:bg-indigo-50/50 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-indigo-300"
             onClick={handleAddDemo}
             disabled={isAddingDemo}
           >
             {isAddingDemo ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Adding...</>
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Adding...
+              </>
             ) : (
-              <><KeyRound className="w-4 h-4 mr-2" /> Add Free Demo</>
+              <>
+                <KeyRound className="mr-2 h-4 w-4" />
+                Add Free Demo
+              </>
             )}
           </Button>
         </div>
       </div>
+
       <Toaster richColors position="bottom-left" />
     </div>
   );

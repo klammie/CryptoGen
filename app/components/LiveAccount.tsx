@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import ToggleTrade from "@/app/components/LiveToggleTrade";
 import TradeDisplay from "@/app/dashboard/trades/TradeDisplay";
@@ -7,7 +8,7 @@ import InvestorConnector from "@/app/components/InvestorConnector";
 import Image from "next/image";
 import { Account } from "../dashboard/trades/TradeSim";
 import { getLiveAccount } from "../lib/getLiveAccount";
-import { Loader2 } from "lucide-react";
+import { Loader2, Wallet, Zap } from "lucide-react";
 
 const LiveAccount: React.FC = () => {
   const [accountData, setAccountData] = useState<Account[]>([]);
@@ -40,66 +41,93 @@ const LiveAccount: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mb-4" />
-        <p className="text-gray-500 font-medium">Loading your accounts...</p>
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white py-16 dark:border-slate-800 dark:bg-slate-900">
+        <Loader2 className="mb-3 h-6 w-6 animate-spin text-indigo-600 dark:text-indigo-400" />
+        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+          Loading your accounts...
+        </p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-center">
-        <p className="text-red-600 font-medium">{error}</p>
+      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-sm font-medium text-rose-600 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-400">
+        {error}
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {accountData.length === 0 ? (
-        <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center shadow-sm">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-white/60 p-12 text-center dark:border-slate-800 dark:bg-slate-900/60">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+            <Zap className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">No Live Accounts</h3>
-          <p className="text-gray-500">Add a live account from the shop to start trading.</p>
+          <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+            No Live Accounts
+          </h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Add a live account from the shop to start trading.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {accountData.map((account) => (
             <div
               key={account.id}
-              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col h-full hover:shadow-md transition-shadow duration-200"
+              className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20">
-                  Live
-                </span>
-                <div className="w-10 h-10 rounded-full bg-gray-50 p-1.5 flex items-center justify-center ring-1 ring-gray-100">
-                  <Image
-                    src={`/images/${account.image}.png`}
-                    alt={account.type}
-                    width={28}
-                    height={28}
-                    className="object-contain"
-                  />
+              {/* ── Bank-style balance panel (matches AccountOverview) ── */}
+              <div className="relative overflow-hidden rounded-2xl bg-slate-900 p-5 text-white dark:border dark:border-slate-700/60">
+                <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-indigo-500/25 blur-2xl" />
+                <div className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-purple-500/15 blur-2xl" />
+
+                <div className="relative z-10 flex flex-col gap-4">
+                  <div className="flex items-start justify-between">
+                    <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-300 ring-1 ring-emerald-400/30">
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                      Live Mode
+                    </span>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/10 backdrop-blur">
+                      <Image
+                        src={`/images/${account.image}.png`}
+                        alt={account.type}
+                        width={22}
+                        height={22}
+                        className="object-contain"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
+                      Total Balance
+                    </p>
+                    <p className="mt-1.5 text-3xl font-bold tracking-tight tabular-nums">
+                      $
+                      {account.amount.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                    <span className="flex items-center gap-2 text-[12px] font-medium text-slate-300">
+                      <Wallet className="h-3.5 w-3.5 text-indigo-300" />
+                      {account.type} Account
+                    </span>
+                    <span className="text-[11px] font-medium tabular-nums text-slate-400">
+                      •••• {String(account.id).slice(-4)}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Content */}
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-500 mb-1">{account.type} Account</p>
-                <h3 className="text-3xl font-bold text-gray-900 tracking-tight">
-                  ${account.amount.toFixed(2)}
-                </h3>
-              </div>
-
-              {/* Footer Actions */}
-              <div className="mt-6 pt-6 border-t border-gray-100 flex items-center gap-3">
+              {/* ── Footer actions ── */}
+              <div className="mt-4 flex items-center gap-3">
                 <div className="flex-1">
                   <ToggleTrade account={account} />
                 </div>
@@ -110,10 +138,7 @@ const LiveAccount: React.FC = () => {
         </div>
       )}
 
-      <div className="pt-4">
-        <TradeDisplay />
-      </div>
-      
+      <TradeDisplay />
       <Toaster position="bottom-left" richColors />
     </div>
   );

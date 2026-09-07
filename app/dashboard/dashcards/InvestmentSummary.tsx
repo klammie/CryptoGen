@@ -24,6 +24,10 @@ interface ChartTooltipProps {
   label?: string | number;
 }
 
+// ── Brand palette ─────────────────────────────────────────────────────────────
+const WINS_COLOR = "#4f46e5"; // indigo-600 — app primary
+const LOSS_COLOR = "#f97316"; // orange-500 — fintech accent
+
 const CustomTooltip = ({ active, payload, label }: ChartTooltipProps) => {
   if (active && payload && payload.length) {
     return (
@@ -94,11 +98,17 @@ const InvestmentSummary = () => {
         </h2>
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ background: WINS_COLOR }}
+            />
             Wins
           </span>
           <span className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
-            <span className="h-2 w-2 rounded-full bg-rose-500" />
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ background: LOSS_COLOR }}
+            />
             Losses
           </span>
         </div>
@@ -126,16 +136,20 @@ const InvestmentSummary = () => {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
+                {/* Purple gradient for wins */}
                 <linearGradient id="colorWins" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  <stop offset="5%" stopColor={WINS_COLOR} stopOpacity={0.28} />
+                  <stop offset="95%" stopColor={WINS_COLOR} stopOpacity={0} />
                 </linearGradient>
+                {/* Orange gradient for losses */}
                 <linearGradient id="colorLoss" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                  <stop offset="5%" stopColor={LOSS_COLOR} stopOpacity={0.28} />
+                  <stop offset="95%" stopColor={LOSS_COLOR} stopOpacity={0} />
                 </linearGradient>
               </defs>
+
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+
               <XAxis
                 dataKey="name"
                 axisLine={false}
@@ -143,6 +157,7 @@ const InvestmentSummary = () => {
                 tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 500 }}
                 dy={10}
               />
+
               <YAxis
                 axisLine={false}
                 tickLine={false}
@@ -150,22 +165,28 @@ const InvestmentSummary = () => {
                 dx={-10}
                 width={44}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#e2e8f0", strokeWidth: 1 }} />
+
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ stroke: "#e2e8f0", strokeWidth: 1 }}
+              />
+
               <Area
                 type="monotone"
                 dataKey="wins"
                 name="Wins"
-                stroke="#10b981"
-                strokeWidth={2}
+                stroke={WINS_COLOR}
+                strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#colorWins)"
               />
+
               <Area
                 type="monotone"
                 dataKey="loss"
                 name="Losses"
-                stroke="#f43f5e"
-                strokeWidth={2}
+                stroke={LOSS_COLOR}
+                strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#colorLoss)"
               />
