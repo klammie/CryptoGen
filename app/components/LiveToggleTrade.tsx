@@ -1,13 +1,9 @@
 import React, { useState } from "react";
 import { Play, Pause } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { toggleLiveAccount } from "@/app/lib/toggleLiveAccount";
 
 interface Account {
-  id: string;
-  type: string;
-  amount: number;
-  image: string;
   isActive: boolean;
   cryptoId?: string;
 }
@@ -18,31 +14,22 @@ const LiveToggleButton: React.FC<{ account: Account }> = ({ account }) => {
   );
 
   const handleToggle = async () => {
-    // ✅ Optimistically update the UI before waiting for the API response
-    setIsPlaying((prev) => !prev);
-
     if (!account.cryptoId) {
-      toast.error("Missing cryptoId for this account.");
+      toast.error("Unable to initiate trade.");
       return;
     }
 
-    const response = await toggleLiveAccount(account.cryptoId);
-
-    if (!response.success || !response.updatedAccount) {
-      toast.error("Failed to toggle account status.");
-
-      // ❌ If the API fails, revert the UI state back
-      setIsPlaying((prev) => !prev);
-      return;
+    try {
+      const response = await toggleLiveAccount(account.cryptoId);
+      if (response.success && response.isActive !== undefined) {
+        setIsPlaying(response.isActive);
+        toast.success("Trade Initiated");
+      } else {
+        toast.error("Unable to initiate trade.");
+      }
+    } catch {
+      toast.error("Unable to initiate trade.");
     }
-
-    // ✅ Ensure final state reflects the API response
-    setIsPlaying(response.updatedAccount.isActive);
-    toast.success(
-      response.updatedAccount.isActive
-        ? "Trade Initiated"
-        : "Account is now inactive"
-    );
   };
 
   return (
@@ -52,7 +39,6 @@ const LiveToggleButton: React.FC<{ account: Account }> = ({ account }) => {
       ) : (
         <Play onClick={handleToggle} />
       )}
-      <Toaster richColors position="bottom-left" />
     </div>
   );
 };

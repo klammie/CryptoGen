@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { getPnLStats } from "@/app/lib/getPnLStats";
 
@@ -11,15 +10,11 @@ interface ChartTooltipProps {
 }
 
 const PnLStats = () => {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [pnlData, setPnLData] = useState([
     { name: "Profit", value: 0 },
     { name: "Loss", value: 0 },
   ]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const fetchPnLData = async () => {
@@ -40,10 +35,7 @@ const PnLStats = () => {
     fetchPnLData();
   }, []);
 
-  const isDark = mounted && resolvedTheme === "dark";
-
-  // Same purple / orange pair as Investment Summary (brighter in dark mode)
-  const COLORS = isDark ? ["#818cf8", "#fb923c"] : ["#4f46e5", "#f97316"];
+  const COLORS = ["#4f46e5", "#f97316"];
 
   const total = pnlData.reduce((sum, item) => sum + item.value, 0);
   const profitPercent = total > 0 ? ((pnlData[0].value / total) * 100).toFixed(1) : "0.0";

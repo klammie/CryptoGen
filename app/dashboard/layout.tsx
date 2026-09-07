@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { KeySquare, Menu, Settings } from "lucide-react";
-import { ThemeToggle } from "../components/ThemeToggle";
 import ClientSignOutButton from "../components/ClientSignOut";
 import prisma from "../lib/db";
 import { redirect } from "next/navigation";
@@ -131,8 +130,6 @@ export default async function DashboardLayout({
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            <ThemeToggle />
-
             {/* User Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

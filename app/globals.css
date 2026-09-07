@@ -8,56 +8,29 @@
 ────────────────────────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    --background: 0 0% 100%;               /* white */
-    --foreground: 222.2 47.4% 11.2%;       /* slate-900 */
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
-    --primary: 243.4 75.4% 58.6%;          /* indigo-600 */
+    --primary: 243.4 75.4% 58.6%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;            /* slate-100 */
+    --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%; /* slate-500 */
-    --accent: 226.2 100% 96.7%;            /* indigo-50 */
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 226.2 100% 96.7%;
     --accent-foreground: 243.4 75.4% 58.6%;
-    --destructive: 347 77.2% 50.2%;        /* rose-600 */
+    --destructive: 347 77.2% 50.2%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214.3 31.8% 91.4%;           /* slate-200 */
+    --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 238.7 86.7% 66.7%;             /* indigo-500 */
-    --radius: 0.75rem;
-    --chart-1: 243.4 75.4% 58.6%;          /* indigo-600 → wins / profit */
-    --chart-2: 24.6 95% 53.1%;             /* orange-500 → losses */
-    --chart-3: 214.3 31.8% 91.4%;
-    --chart-4: 160 84% 39%;
-    --chart-5: 262 83% 66%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;          /* slate-950 */
-    --foreground: 210 40% 96.1%;           /* slate-100 */
-    --card: 222.2 47.4% 11.2%;             /* slate-900 */
-    --card-foreground: 210 40% 96.1%;
-    --popover: 222.2 47.4% 11.2%;
-    --popover-foreground: 210 40% 96.1%;
-    --primary: 234.5 89.7% 74.3%;          /* indigo-400 */
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;        /* slate-800 */
-    --secondary-foreground: 210 40% 96.1%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215.4 20.2% 65.1%; /* slate-400 */
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 234.5 89.7% 74.3%;
-    --destructive: 350 89.2% 60.2%;        /* rose-500 */
-    --destructive-foreground: 0 0% 100%;
-    --border: 217.2 32.6% 17.5%;           /* slate-800 */
-    --input: 217.2 32.6% 17.5%;
     --ring: 238.7 86.7% 66.7%;
-    --chart-1: 234.5 89.7% 74.3%;          /* indigo-400 */
-    --chart-2: 27.2 95.9% 65.1%;           /* orange-400 */
-    --chart-3: 217.2 32.6% 17.5%;
+    --radius: 0.75rem;
+    --chart-1: 243.4 75.4% 58.6%;
+    --chart-2: 24.6 95% 53.1%;
+    --chart-3: 214.3 31.8% 91.4%;
     --chart-4: 160 84% 39%;
     --chart-5: 262 83% 66%;
   }
