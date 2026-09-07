@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Reveal, EASE } from "@/app/components/ui/Reveal";
 import { MotionLink } from "@/app/components/ui/MotionLink";
+import AuthModal from "@/app/components/AuthModal";
 
 /** Animated number that counts up once it scrolls into view */
 function LiveStat({
@@ -257,13 +258,19 @@ export const ProductShowcase = () => {
             >
               <TrendingUp className="w-4 h-4" />
               Explore the dashboard
-            </MotionLink>
-            <MotionLink
-              href="/features"
-              shine={false}
-              className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
-            >
-              See all features →
+                <AuthModal
+                  initialMode="signup"
+                  trigger={
+                    <motion.button
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.96 }}
+                      className="group inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition-colors hover:bg-slate-800"
+                    >
+                      Try the platform
+                      <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </motion.button>
+                  }
+                />
             </MotionLink>
           </div>
         </Reveal>

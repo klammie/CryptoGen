@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { signIn } from "next-auth/react";
 import { registerUser } from "@/app/lib/registerUser";
@@ -33,6 +34,11 @@ const inputClass =
 
 const STRENGTH_LABELS = ["Too weak", "Weak", "Fair", "Good", "Strong"];
 
+interface AuthModalProps {
+  initialMode?: "signin" | "signup";
+  trigger?: ReactNode;
+}
+
 function scorePassword(pw: string) {
   let score = 0;
   if (pw.length >= 8) score++;
@@ -42,9 +48,12 @@ function scorePassword(pw: string) {
   return score;
 }
 
-export default function AuthModal() {
+export default function AuthModal({
+  initialMode = "signin",
+  trigger,
+}: AuthModalProps) {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -103,19 +112,21 @@ export default function AuthModal() {
     <Dialog>
       {/* ── Trigger (black) ── */}
       <DialogTrigger asChild>
-        <motion.button
-          whileHover={{ y: -1 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          disabled={loading}
-          className="group relative overflow-hidden rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-black disabled:opacity-60"
-        >
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -translate-x-[120%] bg-gradient-to-r from-transparent via-indigo-200/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[120%]"
-          />
-          {loading ? "Signing in..." : "Try for Free"}
-        </motion.button>
+        {trigger ?? (
+          <motion.button
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            disabled={loading}
+            className="group relative overflow-hidden rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-black disabled:opacity-60"
+          >
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 -translate-x-[120%] bg-gradient-to-r from-transparent via-indigo-200/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[120%]"
+            />
+            {loading ? "Signing in..." : "Try for Free"}
+          </motion.button>
+        )}
       </DialogTrigger>
 
       {/* ── Modal (white card) ── */}

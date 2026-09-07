@@ -8,6 +8,7 @@ import starImage from "@/public/assets/star.png";
 import springImage from "@/public/assets/spring.png";
 import { MotionLink } from "@/app/components/ui/MotionLink";
 import { EASE } from "@/app/components/ui/Reveal";
+import AuthModal from "@/app/components/AuthModal";
 
 const stagger = {
   hidden: {},
@@ -76,13 +77,19 @@ export const CallToAction = () => {
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 mt-10">
-            <MotionLink
-              href="/dashboard/shop"
-              className="gap-2 px-8 py-3.5 text-base font-semibold text-slate-900 bg-white rounded-xl hover:bg-slate-100 transition-colors shadow-lg"
-            >
-              Get Started Now
-              <MoveRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </MotionLink>
+            <AuthModal
+              initialMode="signup"
+              trigger={
+                <motion.button
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-slate-900 shadow-lg transition-colors hover:bg-slate-100"
+                >
+                  Get Started Now
+                  <MoveRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </motion.button>
+              }
+            />
 
             <MotionLink
               href="/dashboard/help/works"

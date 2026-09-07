@@ -7,6 +7,7 @@ import Image from "next/image";
 import cogImage from "@/public/assets/cog.png";
 import { MotionLink } from "@/app/components/ui/MotionLink";
 import { EASE } from "@/app/components/ui/Reveal";
+import AuthModal from "@/app/components/AuthModal";
 
 const stagger = {
   hidden: {},
@@ -96,13 +97,19 @@ export const Hero = () => {
 
             {/* CTA Buttons */}
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 mt-10">
-              <MotionLink
-                href="/dashboard"
-                className="gap-2 px-6 py-3 text-base font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20"
-              >
-                Start Trading for Free
-                <MoveRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </MotionLink>
+              <AuthModal
+                initialMode="signup"
+                trigger={
+                  <motion.button
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.96 }}
+                    className="group inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-slate-900/20 transition-colors hover:bg-slate-800"
+                  >
+                    Start Trading for Free
+                    <MoveRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </motion.button>
+                }
+              />
 
               <MotionLink
                 href="/about"

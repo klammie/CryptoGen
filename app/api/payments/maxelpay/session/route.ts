@@ -50,8 +50,14 @@ export async function POST(request: Request) {
     })
 
     const result = await response.json().catch(() => null)
-    const checkoutUrl = result?.checkoutUrl ?? result?.data?.checkoutUrl ?? result?.url
-    const sessionId = result?.sessionId ?? result?.data?.sessionId
+    const checkoutUrl =
+      result?.data?.paymentUrl ??
+      result?.paymentUrl ??
+      result?.data?.checkoutUrl ??
+      result?.checkoutUrl ??
+      result?.data?.url ??
+      result?.url
+    const sessionId = result?.data?.sessionId ?? result?.sessionId
 
     if (!response.ok || typeof checkoutUrl !== "string") {
       await prisma.deposit.update({ where: { id: deposit.id }, data: { status: "failed" } })

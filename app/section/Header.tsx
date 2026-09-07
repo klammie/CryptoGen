@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { MoveRight, MenuIcon, X } from "lucide-react";
 import Link from "next/link";
 import AuthModal from "@/app/components/AuthModal";
-import { MotionLink } from "@/app/components/ui/MotionLink";
 import { EASE } from "@/app/components/ui/Reveal";
 import { CryptoGenLogo } from "../components/ui/CryptoGenLogo";
 
@@ -49,13 +48,19 @@ export const Header = () => {
           <span className="hidden md:inline text-slate-400">
             Maximize your profits with institutional-grade AI.
           </span>
-          <Link
-            href="/dashboard"
-            className="group text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
-          >
-            Get started for free
-            <MoveRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5" />
-          </Link>
+          <AuthModal
+            initialMode="signup"
+            trigger={
+              <motion.button
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.96 }}
+                className="group inline-flex items-center gap-1 text-indigo-400 transition-colors hover:text-indigo-300"
+              >
+                Get started for free
+                <MoveRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </motion.button>
+            }
+          />
         </div>
       </div>
 
@@ -110,12 +115,18 @@ export const Header = () => {
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center gap-3">
               <AuthModal />
-              <MotionLink
-                href="/dashboard"
-                className="gap-2 px-4 py-2 text-sm font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors shadow-sm"
-              >
-                Open Dashboard
-              </MotionLink>
+              <AuthModal
+                initialMode="signin"
+                trigger={
+                  <motion.button
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.96 }}
+                    className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800"
+                  >
+                    Open Dashboard
+                  </motion.button>
+                }
+              />
             </div>
 
             {/* Mobile Toggle */}
@@ -172,13 +183,18 @@ export const Header = () => {
 
               <hr className="border-slate-100 my-3" />
               <AuthModal />
-              <MotionLink
-                fullWidth
-                href="/dashboard"
-                className="px-4 py-2.5 text-sm font-semibold text-white bg-slate-900 rounded-lg"
-              >
-                Open Dashboard
-              </MotionLink>
+              <AuthModal
+                initialMode="signin"
+                trigger={
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => setMenuOpen(false)}
+                    className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white"
+                  >
+                    Open Dashboard
+                  </motion.button>
+                }
+              />
             </nav>
           </motion.div>
         )}
