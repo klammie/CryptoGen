@@ -56,15 +56,13 @@ export const dashboardLinks: iAppProps[] = [
 ];
 
 export function DashboardLinks() {
-  const pathname = usePathname();
+  const pathname = usePathname()?.replace(/\/$/, "") || "/";
 
   return (
     <nav className="flex flex-col gap-1.5 px-3">
       {dashboardLinks.map((link) => {
         const Icon = link.icon;
-        // Highlight on exact match AND nested routes (e.g. /dashboard/help/faq)
-        const isActive =
-          pathname === link.href || pathname?.startsWith(`${link.href}/`);
+        const isActive = pathname === link.href;
 
         return (
           <Link

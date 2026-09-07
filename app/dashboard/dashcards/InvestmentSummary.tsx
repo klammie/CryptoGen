@@ -28,6 +28,9 @@ interface ChartTooltipProps {
 const WINS_COLOR = "#4f46e5"; // indigo-600 — app primary
 const LOSS_COLOR = "#f97316"; // orange-500 — fintech accent
 
+const normalizeCryptoName = (crypto: string) =>
+  crypto.trim().toLowerCase() === "etherium" ? "Ethereum" : crypto;
+
 const CustomTooltip = ({ active, payload, label }: ChartTooltipProps) => {
   if (active && payload && payload.length) {
     return (
@@ -64,7 +67,8 @@ const InvestmentSummary = () => {
         }
         const transformedData = response.tradeLogs?.reduce(
           (acc: Array<{ name: string; loss: number; wins: number }>, trade: TradeLog) => {
-            const { crypto, result } = trade;
+            const { result } = trade;
+            const crypto = normalizeCryptoName(trade.crypto);
             let entry = acc.find((item) => item.name === crypto);
             if (!entry) {
               entry = { name: crypto, loss: 0, wins: 0 };
@@ -134,7 +138,7 @@ const InvestmentSummary = () => {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart data={data} margin={{ top: 10, right: 10, left: 8, bottom: 0 }}>
               <defs>
                 {/* Purple gradient for wins */}
                 <linearGradient id="colorWins" x1="0" y1="0" x2="0" y2="1">
@@ -162,8 +166,7 @@ const InvestmentSummary = () => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "#94a3b8", fontSize: 11 }}
-                dx={-10}
-                width={44}
+                width={52}
               />
 
               <Tooltip

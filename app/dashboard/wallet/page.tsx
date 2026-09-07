@@ -97,7 +97,7 @@ export default async function WalletRoute() {
             {/* Actions */}
             <div className="flex flex-wrap gap-3">
               <Deposit />
-              <Withdrawl />
+              <Withdrawl initialBalance={balance} />
               <Cashout />
             </div>
           </div>

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "CryptoGen",
   description: "Most Accurate Crypto Trading Bot",
   icons: {
-    icon: "/qwenlogo.png",
+    icon: "/logo-mark.svg",
   },
 };
 

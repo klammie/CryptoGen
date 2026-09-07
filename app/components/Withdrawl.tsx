@@ -23,8 +23,12 @@ const PERCENTS = [
   { label: "Max", value: 1 },
 ];
 
-const Withdrawl: React.FC = () => {
-  const [accBal, setAccBal] = useState<number>(1000);
+interface WithdrawlProps {
+  initialBalance: number;
+}
+
+const Withdrawl: React.FC<WithdrawlProps> = ({ initialBalance }) => {
+  const [accBal, setAccBal] = useState<number>(initialBalance);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [loading, setLoading] = useState(false);
 

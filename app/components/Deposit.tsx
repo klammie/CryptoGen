@@ -125,8 +125,8 @@ export function Deposit() {
 
           <div className="flex items-start gap-2 rounded-xl border border-indigo-100 bg-indigo-50/70 px-3.5 py-2.5 text-[12px] leading-relaxed text-indigo-900/70 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-200/80">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />
-            Payments are processed by MaxelPay. CryptoGen never stores your card
-            details.
+            Payments are processed securely through MaxelPay using cryptocurrency.
+            CryptoGen never holds or stores your crypto funds.
           </div>
 
           <Button
