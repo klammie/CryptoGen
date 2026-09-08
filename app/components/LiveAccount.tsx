@@ -37,6 +37,9 @@ const LiveAccount: React.FC = () => {
       }
     };
     fetchAccounts();
+    const refreshInterval = window.setInterval(fetchAccounts, 2000);
+
+    return () => window.clearInterval(refreshInterval);
   }, []);
 
   if (loading) {

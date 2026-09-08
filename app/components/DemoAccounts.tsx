@@ -35,6 +35,9 @@ const DemoAccount: React.FC = () => {
       }
     };
     fetchAccounts();
+    const refreshInterval = window.setInterval(fetchAccounts, 2000);
+
+    return () => window.clearInterval(refreshInterval);
   }, []);
 
   const safeAccountData = accountData.map((account) => ({

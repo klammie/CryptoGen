@@ -2,6 +2,7 @@ export function formatTradeDateTime(value: Date | string): string {
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
+    hour12: true,
   }).format(new Date(value));
 }
 
