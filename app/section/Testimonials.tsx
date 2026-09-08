@@ -61,7 +61,7 @@ const TESTIMONIALS: Testimonial[] = [
     avatar:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
     quote:
-      "As a quant, I was skeptical. The codebase is clean, the API is well-documented, and the backtests are honest. Rare combo.",
+      "As a quant dev, I was skeptical. The codebase is clean, the API is well-documented, and the backtests are honest. Rare combo.",
     rating: 5,
     result: "API-first design",
   },

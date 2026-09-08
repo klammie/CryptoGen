@@ -106,7 +106,7 @@ export const Pricing = () => {
                   onClick={() => setBilling(opt)}
                   className={`relative px-5 py-2 text-sm font-semibold rounded-full transition-colors ${
                     billing === opt
-                      ? "text-white"
+                      ? "text-indigo-600"
                       : "text-slate-500 hover:text-slate-900"
                   }`}
                 >

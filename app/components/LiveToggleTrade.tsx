@@ -23,7 +23,9 @@ const LiveToggleButton: React.FC<{ account: Account }> = ({ account }) => {
       const response = await toggleLiveAccount(account.cryptoId);
       if (response.success && response.isActive !== undefined) {
         setIsPlaying(response.isActive);
-        toast.success("Trade Initiated");
+        toast.success(
+          response.isActive ? "Trade Initiated" : "Trades Paused"
+        );
       } else {
         toast.error("Unable to initiate trade.");
       }
