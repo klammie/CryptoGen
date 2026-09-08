@@ -10,7 +10,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { KeySquare, Menu, Settings } from "lucide-react";
+import { Headphones, KeySquare, Menu } from "lucide-react";
 import ClientSignOutButton from "../components/ClientSignOut";
 import prisma from "../lib/db";
 import { redirect } from "next/navigation";
@@ -184,9 +184,9 @@ export default async function DashboardLayout({
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings" className="flex items-center cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                  <Link href="/dashboard/help/support" className="flex items-center cursor-pointer">
+                    <Headphones className="mr-2 h-4 w-4" />
+                    <span>Support</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

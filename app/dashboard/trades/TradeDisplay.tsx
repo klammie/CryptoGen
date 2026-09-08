@@ -5,6 +5,7 @@ import { AllTrades } from "@/app/components/AllTrades";
 import Image from "next/image";
 import { getTradeLogs } from "@/app/lib/getTradeLogs";
 import { getUserId } from "@/app/lib/getUserId";
+import { formatTradeDateTime } from "@/app/lib/formatTradeTime";
 import { cryptoData } from "./TradeSim";
 import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 
@@ -18,6 +19,7 @@ interface TradeLog {
   };
   result: number;
   interval: number;
+  createdAt: Date | string;
 }
 
 const TradeDisplay: React.FC = () => {
@@ -49,6 +51,7 @@ const TradeDisplay: React.FC = () => {
               image: `/assets/cryptoimages/${trade.crypto}.png`,
             },
             interval: 0,
+            createdAt: trade.createdAt,
           }));
           setTradeLogs(formattedTradeLogs);
         } else {
@@ -142,7 +145,7 @@ const TradeDisplay: React.FC = () => {
                       {trade.matchedCrypto?.name || trade.name || "Unknown"}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Trade executed
+                      {formatTradeDateTime(trade.createdAt)}
                     </p>
                   </div>
                 </div>

@@ -38,7 +38,7 @@ export default function ClientDropdownMenu({
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href="/dashboard">Settings</a>
+          <a href="/dashboard/help/support">Support</a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <ClientSignOutButton />

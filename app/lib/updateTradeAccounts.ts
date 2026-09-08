@@ -1,8 +1,10 @@
 "use server";
 import prisma from "@/app/lib/db";
+import { getUserId } from "@/app/lib/getUserId";
 
-export async function updateTradeAccounts(userId: string, tradeResult: number) {
+export async function updateTradeAccounts(_accountId: string, tradeResult: number) {
   try {
+    const userId = await getUserId();
     if (!userId) return { success: false, error: "Missing userId" };
 
     // ✅ Find both Live & Demo accounts
@@ -13,23 +15,21 @@ export async function updateTradeAccounts(userId: string, tradeResult: number) {
       return { success: false, error: "No accounts found for user" };
     }
 
-    // ✅ Update LiveAccount if it exists
-    if (liveAccount) {
-      await prisma.liveAccount.update({
-        where: { id: userId },
-        data: { amount: { increment: tradeResult } },
-      });
-      console.log(`Updated LiveAccount balance for user ${userId}`);
-    }
+    await prisma.$transaction(async (transaction) => {
+      if (liveAccount) {
+        await transaction.liveAccount.update({
+          where: { id: userId },
+          data: { amount: { increment: tradeResult } },
+        });
+      }
 
-    // ✅ Update DemoAccount if it exists
-    if (demoAccount) {
-      await prisma.demoAccount.update({
-        where: { id: userId },
-        data: { amount: { increment: tradeResult } },
-      });
-      console.log(`Updated DemoAccount balance for user ${userId}`);
-    }
+      if (demoAccount) {
+        await transaction.demoAccount.update({
+          where: { id: userId },
+          data: { amount: { increment: tradeResult } },
+        });
+      }
+    });
 
     return { success: true, message: "Account balance updated successfully" };
   } catch (error) {

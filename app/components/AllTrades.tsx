@@ -14,11 +14,13 @@ import Image from "next/image";
 import { getTradeLogs } from "@/app/lib/getTradeLogs";
 import { getUserId } from "../lib/getUserId";
 import { cryptoData } from "../dashboard/trades/TradeSim";
+import { formatTradeDateTime } from "../lib/formatTradeTime";
 import { AlertCircle, History, Loader2 } from "lucide-react";
 
 interface TradeLog {
   id: string;
   crypto: string;
+  createdAt: Date | string;
   matchedCrypto?: {
     id?: string;
     image: string;
@@ -166,7 +168,7 @@ export function AllTrades() {
                           {trade.matchedCrypto?.name ?? trade.crypto ?? "Unknown"}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                          Trade executed
+                          {formatTradeDateTime(trade.createdAt)}
                         </p>
                       </div>
                     </div>

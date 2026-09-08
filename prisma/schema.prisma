@@ -93,6 +93,7 @@ model TradeLogs {
   userId String // ✅ Explicitly store userId
   crypto String
   result Int
+  createdAt DateTime @default(now())
 
   // ✅ Define relationship if `User` model exists
   user User @relation(fields: [userId], references: [id])

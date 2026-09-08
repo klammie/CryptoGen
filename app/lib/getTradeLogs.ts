@@ -7,6 +7,7 @@ export async function getTradeLogs(userId: string) {
 
     const tradeLogs = await prisma.tradeLogs.findMany({
       where: { userId }, // ✅ Correct: Filtering by userId
+      orderBy: { createdAt: "asc" },
     });
 
     return { success: true, tradeLogs };

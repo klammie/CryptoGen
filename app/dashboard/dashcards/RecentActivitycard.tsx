@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { getTradeLogs } from "@/app/lib/getTradeLogs";
 import { getUserId } from "@/app/lib/getUserId";
+import { formatRelativeTime } from "@/app/lib/formatTradeTime";
 import { cryptoData } from "../trades/TradeSim";
 
 interface TradeLog {
@@ -11,6 +12,7 @@ interface TradeLog {
   crypto: string;
   matchedCrypto?: { id?: string; image: string; name: string };
   result: number;
+  createdAt: Date | string;
 }
 
 const RecentActivity: React.FC = () => {
@@ -129,7 +131,9 @@ const RecentActivity: React.FC = () => {
                     <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                       {trade.crypto || "Unknown"}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Trade executed</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {formatRelativeTime(trade.createdAt)}
+                    </p>
                   </div>
                 </div>
 
