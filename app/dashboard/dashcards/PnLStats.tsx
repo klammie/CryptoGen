@@ -32,7 +32,11 @@ const PnLStats = () => {
         setLoading(false);
       }
     };
+
     fetchPnLData();
+
+    window.addEventListener("trade-completed", fetchPnLData);
+    return () => window.removeEventListener("trade-completed", fetchPnLData);
   }, []);
 
   const COLORS = ["#4f46e5", "#f97316"];

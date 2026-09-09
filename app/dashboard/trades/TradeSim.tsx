@@ -229,7 +229,8 @@ export const coreFunc = async (account: CryptoAccount): Promise<void> => {
 
   // ✅ Update the account balance based on trade result in the database
   await updateTradeAccounts(account.id, result);
-  updateTradeStatsLc(result);
+  await updateTradeStatsLc(result);
+  window.dispatchEvent(new Event("trade-completed"));
 
   console.log("Trade log recorded and account balance updated!");
 };

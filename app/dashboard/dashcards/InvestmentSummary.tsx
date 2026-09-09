@@ -57,6 +57,7 @@ const InvestmentSummary = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setError(null);
       try {
         const userId = await getUserId();
         const response = await getTradeLogs(userId);
@@ -90,7 +91,11 @@ const InvestmentSummary = () => {
         setLoading(false);
       }
     };
+
     fetchData();
+
+    window.addEventListener("trade-completed", fetchData);
+    return () => window.removeEventListener("trade-completed", fetchData);
   }, []);
 
   return (
