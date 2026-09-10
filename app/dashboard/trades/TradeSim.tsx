@@ -56,6 +56,7 @@ export const cryptoData: Crypto[] = [
   { name: "Solana", image: "/assets/crypto-images/solanac.png", id: 7 }, // ✅ Remove `/public/assets/`
   { name: "Xrp", image: "/assets/crypto-images/xrp.png", id: 8 },
   { name: "Tether", image: "/assets/crypto-images/tether.png", id: 9 },
+  { name: "WienerAI", image: "/assets/crypto-images/wienerai.jpg", id: 10 },
 ];
 
 export const cryptoAcc: CryptoAccount[] = [
